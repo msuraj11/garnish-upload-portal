@@ -73,7 +73,6 @@ const FileUploader: React.FC<FileUploaderProps> = ({ onFileSelect, selectedFile 
           <Button 
             variant="outline" 
             className="bg-white hover:bg-gray-50 border-bank-light text-bank-dark"
-            onClick={(e) => e.stopPropagation()}
           >
             Select PDF File
           </Button>
