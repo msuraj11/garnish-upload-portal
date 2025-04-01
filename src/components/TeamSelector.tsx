@@ -17,7 +17,7 @@ interface TeamOption {
 }
 
 const teamOptions: TeamOption[] = [
-  { label: 'Garnishment Case Management Team (GCM)', value: 'case_management_l1' },
+  { label: 'Garnishment Case Management Team (GCM)', value: 'case_management' },
   { label: 'Bank Legal Team', value: 'legal_team' },
   { label: 'Bank Compliance Team', value: 'compliance_team' },
 ];

@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { GarnishmentOrder } from '@/components/GarnishmentTable';
 import { WorkflowStage } from '@/components/GarnishmentWorkflowTracker';
@@ -14,7 +13,7 @@ interface GarnishmentContextType {
 
 const GarnishmentContext = createContext<GarnishmentContextType | undefined>(undefined);
 
-// Sample data
+// Sample data with updated stage values
 const initialOrders: GarnishmentOrder[] = [
   {
     id: '1',
@@ -33,7 +32,7 @@ const initialOrders: GarnishmentOrder[] = [
     accountNumber: '87654321',
     dateReceived: new Date(2023, 6, 22),
     dueDate: new Date(2023, 7, 22),
-    currentStage: 'case_management_l1',
+    currentStage: 'case_management',
     amount: 3200
   },
   {
@@ -73,7 +72,7 @@ const initialOrders: GarnishmentOrder[] = [
     accountNumber: '90123456',
     dateReceived: new Date(2023, 7, 20),
     dueDate: new Date(2023, 8, 20),
-    currentStage: 'case_management_l2',
+    currentStage: 'case_management',
     amount: 2900
   },
   {
@@ -133,7 +132,7 @@ const initialOrders: GarnishmentOrder[] = [
     accountNumber: '56789013',
     dateReceived: new Date(2023, 9, 1),
     dueDate: new Date(2023, 10, 1),
-    currentStage: 'case_management_l1',
+    currentStage: 'case_management',
     amount: 6100
   },
   {
@@ -143,19 +142,28 @@ const initialOrders: GarnishmentOrder[] = [
     accountNumber: '67890123',
     dateReceived: new Date(2023, 9, 5),
     dueDate: new Date(2023, 10, 5),
-    currentStage: 'case_management_l2',
+    currentStage: 'case_management',
     amount: 4300
   }
 ];
 
 // Helper function to parse dates in stored orders
 const parseStoredOrders = (storedOrders: any[]): GarnishmentOrder[] => {
-  return storedOrders.map(order => ({
-    ...order,
-    // Ensure dates are proper Date objects
-    dateReceived: new Date(order.dateReceived),
-    dueDate: new Date(order.dueDate)
-  }));
+  return storedOrders.map(order => {
+    // Convert old stage IDs to new ones
+    let currentStage = order.currentStage;
+    if (currentStage === 'case_management_l1' || currentStage === 'case_management_l2') {
+      currentStage = 'case_management';
+    }
+    
+    return {
+      ...order,
+      // Ensure dates are proper Date objects
+      dateReceived: new Date(order.dateReceived),
+      dueDate: new Date(order.dueDate),
+      currentStage: currentStage
+    };
+  });
 };
 
 export const GarnishmentProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { 
@@ -35,24 +34,19 @@ const GarnishmentTable: React.FC<GarnishmentTableProps> = ({ orders }) => {
     return stage ? stage.label : 'Unknown';
   };
   
-  // Improved helper function to safely format dates
   const formatDate = (date: Date | string | null | undefined) => {
     try {
-      // Handle null or undefined
       if (!date) {
         return 'N/A';
       }
       
-      // If it's already a Date object, check if valid before using
       if (date instanceof Date) {
         return isValid(date) ? format(date, 'MMM d, yyyy') : 'Invalid date';
       }
-      // If it's a string (likely from localStorage serialization), parse it first
       else if (typeof date === 'string') {
         const parsedDate = parseISO(date);
         return isValid(parsedDate) ? format(parsedDate, 'MMM d, yyyy') : 'Invalid date';
       }
-      // Fallback
       return 'Invalid date';
     } catch (error) {
       console.error('Error formatting date:', date, error);
@@ -97,8 +91,7 @@ const GarnishmentTable: React.FC<GarnishmentTableProps> = ({ orders }) => {
                     order.currentStage === 'document_management' ? 'bg-blue-100 text-blue-800' :
                     order.currentStage === 'legal_team' ? 'bg-purple-100 text-purple-800' :
                     order.currentStage === 'compliance_team' ? 'bg-yellow-100 text-yellow-800' :
-                    order.currentStage === 'case_management_l1' ? 'bg-indigo-100 text-indigo-800' :
-                    order.currentStage === 'case_management_l2' ? 'bg-pink-100 text-pink-800' :
+                    order.currentStage === 'case_management' ? 'bg-indigo-100 text-indigo-800' :
                     order.currentStage === 'customer_management' ? 'bg-orange-100 text-orange-800' :
                     'bg-gray-100 text-gray-800'
                   }`}>

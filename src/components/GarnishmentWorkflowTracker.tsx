@@ -1,12 +1,10 @@
-
 import React from 'react';
-import { Check, File, User, Shield, MessageSquare, Mail, CalendarCheck } from 'lucide-react';
+import { Check, File, User, Shield, MessageSquare, Mail } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 
 export type WorkflowStage = 
   | 'document_management' 
-  | 'case_management_l1' 
-  | 'case_management_l2' 
+  | 'case_management' 
   | 'legal_team' 
   | 'compliance_team' 
   | 'customer_management' 
@@ -25,14 +23,9 @@ export const workflowStages: WorkflowStageInfo[] = [
     icon: File
   },
   {
-    id: 'case_management_l1',
-    label: 'Garnishment Case Management L1',
+    id: 'case_management',
+    label: 'Garnishment Case Management',
     icon: User
-  },
-  {
-    id: 'case_management_l2',
-    label: 'Garnishment Case Management L2',
-    icon: CalendarCheck
   },
   {
     id: 'legal_team',
