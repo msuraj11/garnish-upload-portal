@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { format } from 'date-fns';
 import Layout from '@/components/Layout';
@@ -8,12 +8,14 @@ import GarnishmentWorkflowTracker, { WorkflowStage, workflowStages } from '@/com
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/sonner';
-import { ArrowLeft, FileText, User, CalendarCheck, Clock } from 'lucide-react';
+import { ArrowLeft, FileText, User, CalendarCheck, Clock, FileIcon } from 'lucide-react';
+import PDFPreview from '@/components/PDFPreview';
 
 const GarnishmentDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { getOrderById, updateOrderStage } = useGarnishment();
+  const { getOrderById, updateOrderStage, getSamplePdfUrl } = useGarnishment();
+  const [showDocument, setShowDocument] = useState(false);
   
   const order = getOrderById(id || '');
   
@@ -42,6 +44,11 @@ const GarnishmentDetails = () => {
   };
   
   const isLastStage = order.currentStage === 'outbound_communication';
+
+  // This is a mock function to handle showing the PDF
+  const handleShowDocument = () => {
+    setShowDocument(true);
+  };
   
   return (
     <Layout>
@@ -64,20 +71,57 @@ const GarnishmentDetails = () => {
             </p>
           </div>
           
-          {!isLastStage && (
+          <div className="flex gap-2 mt-4 md:mt-0">
             <Button 
-              onClick={handleMoveToNextStage} 
-              className="mt-4 md:mt-0 bg-bank hover:bg-bank-dark"
+              onClick={handleShowDocument} 
+              variant="outline"
+              className="flex items-center"
             >
-              Advance to Next Stage
+              <FileIcon className="h-4 w-4 mr-2" />
+              Show Document
             </Button>
-          )}
+            
+            {!isLastStage && (
+              <Button 
+                onClick={handleMoveToNextStage} 
+                className="bg-bank hover:bg-bank-dark"
+              >
+                Advance to Next Stage
+              </Button>
+            )}
+          </div>
         </div>
       </div>
       
       <div className="bg-white p-6 rounded-lg border border-gray-200 mb-8">
         <GarnishmentWorkflowTracker currentStage={order.currentStage} />
       </div>
+      
+      {showDocument && (
+        <div className="mb-8">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center">
+                <FileText className="h-5 w-5 mr-2 text-bank" />
+                Garnishment Document
+              </CardTitle>
+              <CardDescription>
+                Court order document for garnishment case {order.caseNumber}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="pdf-container">
+              <PDFPreview 
+                file={new File(
+                  [new Blob()], 
+                  "garnishment-order.pdf", 
+                  { type: "application/pdf" }
+                )}
+                pdfUrl={getSamplePdfUrl()}  
+              />
+            </CardContent>
+          </Card>
+        </div>
+      )}
       
       <div className="grid md:grid-cols-2 gap-6">
         <Card>
@@ -102,11 +146,20 @@ const GarnishmentDetails = () => {
                 <p className="font-medium">{format(new Date(order.dateReceived), 'MMM d, yyyy')}</p>
               </div>
               <div>
+                <p className="text-sm text-gray-500">Due Date</p>
+                <p className="font-medium">{format(new Date(order.dueDate), 'MMM d, yyyy')}</p>
+              </div>
+              <div>
                 <p className="text-sm text-gray-500">Current Stage</p>
                 <p className="font-medium">
                   <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                     order.currentStage === 'outbound_communication' ? 'bg-green-100 text-green-800' :
                     order.currentStage === 'document_management' ? 'bg-blue-100 text-blue-800' :
+                    order.currentStage === 'legal_team' ? 'bg-purple-100 text-purple-800' :
+                    order.currentStage === 'compliance_team' ? 'bg-yellow-100 text-yellow-800' :
+                    order.currentStage === 'case_management_l1' ? 'bg-indigo-100 text-indigo-800' :
+                    order.currentStage === 'case_management_l2' ? 'bg-pink-100 text-pink-800' :
+                    order.currentStage === 'customer_management' ? 'bg-orange-100 text-orange-800' :
                     'bg-gray-100 text-gray-800'
                   }`}>
                     {workflowStages.find(stage => stage.id === order.currentStage)?.label}

@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import AddGarnishment from "./pages/AddGarnishment";
 import GarnishmentDetails from "./pages/GarnishmentDetails";
+import TeamOrders from "./pages/TeamOrders";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +24,7 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/add-garnishment" element={<AddGarnishment />} />
             <Route path="/garnishment/:id" element={<GarnishmentDetails />} />
+            <Route path="/team/:teamId" element={<TeamOrders />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

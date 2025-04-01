@@ -3,6 +3,7 @@ import React from 'react';
 import Layout from '@/components/Layout';
 import { useGarnishment } from '@/context/GarnishmentContext';
 import GarnishmentTable from '@/components/GarnishmentTable';
+import TeamSelector from '@/components/TeamSelector';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
 import { PlusCircle } from 'lucide-react';
@@ -26,6 +27,8 @@ const Index = () => {
           </Link>
         </Button>
       </div>
+      
+      <TeamSelector />
       
       <GarnishmentTable orders={orders} />
     </Layout>

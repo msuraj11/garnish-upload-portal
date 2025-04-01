@@ -11,11 +11,12 @@ import LoadingIndicator from './LoadingIndicator';
 pdfjs.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjs.version}/build/pdf.worker.min.js`;
 
 interface PDFPreviewProps {
-  file: File | null;
+  file?: File | null;
+  pdfUrl?: string;
   isLoading?: boolean;
 }
 
-const PDFPreview: React.FC<PDFPreviewProps> = ({ file, isLoading = false }) => {
+const PDFPreview: React.FC<PDFPreviewProps> = ({ file, pdfUrl, isLoading = false }) => {
   const [numPages, setNumPages] = useState<number | null>(null);
   const [pageNumber, setPageNumber] = useState<number>(1);
   const [fileUrl, setFileUrl] = useState<string | null>(null);
@@ -24,22 +25,26 @@ const PDFPreview: React.FC<PDFPreviewProps> = ({ file, isLoading = false }) => {
   useEffect(() => {
     if (file) {
       // Clean up previous URL object to avoid memory leaks
-      if (fileUrl) {
+      if (fileUrl && !fileUrl.startsWith('http') && !fileUrl.startsWith('/')) {
         URL.revokeObjectURL(fileUrl);
       }
       
       setFileUrl(URL.createObjectURL(file));
       setPageNumber(1); // Reset to first page when changing files
       setError(null);
+    } else if (pdfUrl) {
+      setFileUrl(pdfUrl);
+      setPageNumber(1);
+      setError(null);
     }
     
     // Cleanup on component unmount
     return () => {
-      if (fileUrl) {
+      if (fileUrl && !fileUrl.startsWith('http') && !fileUrl.startsWith('/')) {
         URL.revokeObjectURL(fileUrl);
       }
     };
-  }, [file]);
+  }, [file, pdfUrl]);
 
   const onDocumentLoadSuccess = ({ numPages }: { numPages: number }) => {
     setNumPages(numPages);
@@ -68,11 +73,11 @@ const PDFPreview: React.FC<PDFPreviewProps> = ({ file, isLoading = false }) => {
     );
   }
 
-  if (!file || !fileUrl) {
+  if (!fileUrl) {
     return (
       <div className="pdf-page bg-bank-gray">
         <p className="text-bank-dark text-opacity-60">
-          No document uploaded. Please upload a PDF file.
+          No document available. Please upload a PDF file.
         </p>
       </div>
     );
