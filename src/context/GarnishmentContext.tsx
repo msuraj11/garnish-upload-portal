@@ -5,7 +5,7 @@ import { WorkflowStage } from '@/components/GarnishmentWorkflowTracker';
 
 interface GarnishmentContextType {
   orders: GarnishmentOrder[];
-  addOrder: (order: Omit<GarnishmentOrder, 'id' | 'dateReceived' | 'currentStage'>) => void;
+  addOrder: (order: Omit<GarnishmentOrder, 'id' | 'dateReceived' | 'currentStage'>) => GarnishmentOrder;
   getOrderById: (id: string) => GarnishmentOrder | undefined;
   updateOrderStage: (id: string, newStage: WorkflowStage) => void;
 }
@@ -64,7 +64,7 @@ export const GarnishmentProvider: React.FC<{ children: React.ReactNode }> = ({ c
     };
     
     setOrders(prevOrders => [...prevOrders, newOrder]);
-    return newOrder;
+    return newOrder;  // Return the new order
   };
 
   const getOrderById = (id: string) => {
