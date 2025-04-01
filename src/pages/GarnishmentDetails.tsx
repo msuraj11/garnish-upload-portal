@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
@@ -123,14 +124,7 @@ const GarnishmentDetails = () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="pdf-container">
-              <PDFPreview 
-                file={new File(
-                  [new Blob()], 
-                  "garnishment-order.pdf", 
-                  { type: "application/pdf" }
-                )}
-                pdfUrl={getSamplePdfUrl()}  
-              />
+              <PDFPreview pdfUrl={getSamplePdfUrl()} />
             </CardContent>
           </Card>
         </div>
