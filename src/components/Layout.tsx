@@ -1,7 +1,16 @@
 
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { PlusCircle, FileText } from 'lucide-react';
+import { PlusCircle, FileText, User, Shield, Scale, MessageSquare } from 'lucide-react';
+import { WorkflowStage } from './GarnishmentWorkflowTracker';
+
+// Team options for the navigation
+const teamOptions: { label: string; value: WorkflowStage; icon: React.ElementType }[] = [
+  { label: 'Garnishment Case Management', value: 'case_management', icon: User },
+  { label: 'Legal Team', value: 'legal_team', icon: Scale },
+  { label: 'Compliance Team', value: 'compliance_team', icon: Shield },
+  { label: 'Customer Management', value: 'customer_management', icon: MessageSquare }
+];
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const location = useLocation();
@@ -48,6 +57,23 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               <FileText className="h-4 w-4" />
               <span>Garnishment Orders</span>
             </Link>
+            
+            {/* Teams navigation links */}
+            {teamOptions.map((team) => (
+              <Link
+                key={team.value}
+                to={`/team/${team.value}`}
+                className={`py-4 px-6 font-medium flex items-center space-x-2 border-b-2 ${
+                  location.pathname === `/team/${team.value}`
+                    ? 'border-bank text-bank'
+                    : 'border-transparent text-gray-500 hover:text-bank hover:border-bank-light'
+                }`}
+              >
+                <team.icon className="h-4 w-4" />
+                <span>{team.label}</span>
+              </Link>
+            ))}
+            
             <Link 
               to="/add-garnishment"
               className={`py-4 px-6 font-medium flex items-center space-x-2 border-b-2 ${
