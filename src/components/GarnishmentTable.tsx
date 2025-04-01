@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { WorkflowStage, workflowStages } from './GarnishmentWorkflowTracker';
-import { format, parseISO } from 'date-fns';
+import { format, parseISO, isValid } from 'date-fns';
 import { ExternalLink } from 'lucide-react';
 
 export interface GarnishmentOrder {
@@ -35,16 +35,22 @@ const GarnishmentTable: React.FC<GarnishmentTableProps> = ({ orders }) => {
     return stage ? stage.label : 'Unknown';
   };
   
-  // Helper function to safely format dates
-  const formatDate = (date: Date | string) => {
+  // Improved helper function to safely format dates
+  const formatDate = (date: Date | string | null | undefined) => {
     try {
-      // If it's already a Date object, use it directly
+      // Handle null or undefined
+      if (!date) {
+        return 'N/A';
+      }
+      
+      // If it's already a Date object, check if valid before using
       if (date instanceof Date) {
-        return format(date, 'MMM d, yyyy');
+        return isValid(date) ? format(date, 'MMM d, yyyy') : 'Invalid date';
       }
       // If it's a string (likely from localStorage serialization), parse it first
       else if (typeof date === 'string') {
-        return format(parseISO(date), 'MMM d, yyyy');
+        const parsedDate = parseISO(date);
+        return isValid(parsedDate) ? format(parsedDate, 'MMM d, yyyy') : 'Invalid date';
       }
       // Fallback
       return 'Invalid date';
