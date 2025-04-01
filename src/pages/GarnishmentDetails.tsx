@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
@@ -11,18 +10,14 @@ import { toast } from '@/components/ui/sonner';
 import { ArrowLeft, FileText, User, CalendarCheck, Clock, FileIcon } from 'lucide-react';
 import PDFPreview from '@/components/PDFPreview';
 
-// Helper function to safely format dates
 const formatDate = (date: Date | string, formatString = 'MMM d, yyyy') => {
   try {
-    // If it's already a Date object, use it directly
     if (date instanceof Date) {
       return format(date, formatString);
     }
-    // If it's a string (likely from localStorage serialization), parse it first
     else if (typeof date === 'string') {
       return format(parseISO(date), formatString);
     }
-    // Fallback
     return 'Invalid date';
   } catch (error) {
     console.error('Error formatting date:', date, error);
@@ -64,7 +59,6 @@ const GarnishmentDetails = () => {
   
   const isLastStage = order.currentStage === 'outbound_communication';
 
-  // This is a mock function to handle showing the PDF
   const handleShowDocument = () => {
     setShowDocument(true);
   };
@@ -176,8 +170,7 @@ const GarnishmentDetails = () => {
                     order.currentStage === 'document_management' ? 'bg-blue-100 text-blue-800' :
                     order.currentStage === 'legal_team' ? 'bg-purple-100 text-purple-800' :
                     order.currentStage === 'compliance_team' ? 'bg-yellow-100 text-yellow-800' :
-                    order.currentStage === 'case_management_l1' ? 'bg-indigo-100 text-indigo-800' :
-                    order.currentStage === 'case_management_l2' ? 'bg-pink-100 text-pink-800' :
+                    order.currentStage === 'case_management' ? 'bg-indigo-100 text-indigo-800' :
                     order.currentStage === 'customer_management' ? 'bg-orange-100 text-orange-800' :
                     'bg-gray-100 text-gray-800'
                   }`}>
@@ -240,7 +233,6 @@ const GarnishmentDetails = () => {
                 </div>
               </div>
               
-              {/* This would ideally be populated with real activity data */}
               <div className="flex">
                 <div className="mr-4 flex flex-col items-center">
                   <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500">
