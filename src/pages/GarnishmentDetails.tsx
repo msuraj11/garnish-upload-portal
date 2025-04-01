@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import Layout from '@/components/Layout';
 import { useGarnishment } from '@/context/GarnishmentContext';
 import GarnishmentWorkflowTracker, { WorkflowStage, workflowStages } from '@/components/GarnishmentWorkflowTracker';
@@ -10,6 +10,25 @@ import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/sonner';
 import { ArrowLeft, FileText, User, CalendarCheck, Clock, FileIcon } from 'lucide-react';
 import PDFPreview from '@/components/PDFPreview';
+
+// Helper function to safely format dates
+const formatDate = (date: Date | string, formatString = 'MMM d, yyyy') => {
+  try {
+    // If it's already a Date object, use it directly
+    if (date instanceof Date) {
+      return format(date, formatString);
+    }
+    // If it's a string (likely from localStorage serialization), parse it first
+    else if (typeof date === 'string') {
+      return format(parseISO(date), formatString);
+    }
+    // Fallback
+    return 'Invalid date';
+  } catch (error) {
+    console.error('Error formatting date:', date, error);
+    return 'Invalid date';
+  }
+};
 
 const GarnishmentDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -143,11 +162,11 @@ const GarnishmentDetails = () => {
               </div>
               <div>
                 <p className="text-sm text-gray-500">Date Received</p>
-                <p className="font-medium">{format(new Date(order.dateReceived), 'MMM d, yyyy')}</p>
+                <p className="font-medium">{formatDate(order.dateReceived)}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Due Date</p>
-                <p className="font-medium">{format(new Date(order.dueDate), 'MMM d, yyyy')}</p>
+                <p className="font-medium">{formatDate(order.dueDate)}</p>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Current Stage</p>
@@ -213,7 +232,7 @@ const GarnishmentDetails = () => {
                 <div className="pb-6">
                   <p className="text-sm font-medium">Order Received</p>
                   <p className="text-xs text-gray-500">
-                    {format(new Date(order.dateReceived), 'MMM d, yyyy h:mm a')}
+                    {formatDate(order.dateReceived, 'MMM d, yyyy h:mm a')}
                   </p>
                   <p className="mt-1 text-sm text-gray-600">
                     Garnishment order processed by document management team
@@ -231,7 +250,7 @@ const GarnishmentDetails = () => {
                 <div>
                   <p className="text-sm font-medium">Current Stage: {workflowStages.find(stage => stage.id === order.currentStage)?.label}</p>
                   <p className="text-xs text-gray-500">
-                    {format(new Date(), 'MMM d, yyyy')}
+                    {formatDate(new Date(), 'MMM d, yyyy')}
                   </p>
                   <p className="mt-1 text-sm text-gray-600">
                     Order is currently being processed in this stage

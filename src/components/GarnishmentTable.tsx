@@ -11,7 +11,7 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import { WorkflowStage, workflowStages } from './GarnishmentWorkflowTracker';
-import { format } from 'date-fns';
+import { format, parseISO } from 'date-fns';
 import { ExternalLink } from 'lucide-react';
 
 export interface GarnishmentOrder {
@@ -33,6 +33,25 @@ const GarnishmentTable: React.FC<GarnishmentTableProps> = ({ orders }) => {
   const getStageName = (stageId: WorkflowStage) => {
     const stage = workflowStages.find(s => s.id === stageId);
     return stage ? stage.label : 'Unknown';
+  };
+  
+  // Helper function to safely format dates
+  const formatDate = (date: Date | string) => {
+    try {
+      // If it's already a Date object, use it directly
+      if (date instanceof Date) {
+        return format(date, 'MMM d, yyyy');
+      }
+      // If it's a string (likely from localStorage serialization), parse it first
+      else if (typeof date === 'string') {
+        return format(parseISO(date), 'MMM d, yyyy');
+      }
+      // Fallback
+      return 'Invalid date';
+    } catch (error) {
+      console.error('Error formatting date:', date, error);
+      return 'Invalid date';
+    }
   };
   
   return (
@@ -64,8 +83,8 @@ const GarnishmentTable: React.FC<GarnishmentTableProps> = ({ orders }) => {
                 <TableCell>{order.customerName}</TableCell>
                 <TableCell>{order.accountNumber}</TableCell>
                 <TableCell>${order.amount.toLocaleString()}</TableCell>
-                <TableCell>{format(new Date(order.dateReceived), 'MMM d, yyyy')}</TableCell>
-                <TableCell>{format(new Date(order.dueDate), 'MMM d, yyyy')}</TableCell>
+                <TableCell>{formatDate(order.dateReceived)}</TableCell>
+                <TableCell>{formatDate(order.dueDate)}</TableCell>
                 <TableCell>
                   <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
                     order.currentStage === 'outbound_communication' ? 'bg-green-100 text-green-800' :

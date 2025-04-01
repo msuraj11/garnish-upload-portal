@@ -148,11 +148,31 @@ const initialOrders: GarnishmentOrder[] = [
   }
 ];
 
+// Helper function to parse dates in stored orders
+const parseStoredOrders = (storedOrders: any[]): GarnishmentOrder[] => {
+  return storedOrders.map(order => ({
+    ...order,
+    // Ensure dates are proper Date objects
+    dateReceived: new Date(order.dateReceived),
+    dueDate: new Date(order.dueDate)
+  }));
+};
+
 export const GarnishmentProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [orders, setOrders] = useState<GarnishmentOrder[]>(() => {
     // Try to load from localStorage
     const savedOrders = localStorage.getItem('garnishmentOrders');
-    return savedOrders ? JSON.parse(savedOrders) : initialOrders;
+    if (savedOrders) {
+      try {
+        // Parse the stored JSON and ensure dates are proper Date objects
+        const parsedOrders = JSON.parse(savedOrders);
+        return parseStoredOrders(parsedOrders);
+      } catch (error) {
+        console.error('Error parsing stored orders:', error);
+        return initialOrders;
+      }
+    }
+    return initialOrders;
   });
 
   // Save to localStorage whenever orders change
