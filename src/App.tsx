@@ -11,6 +11,7 @@ import AddGarnishment from "./pages/AddGarnishment";
 import GarnishmentDetails from "./pages/GarnishmentDetails";
 import TeamOrders from "./pages/TeamOrders";
 import Landing from "./pages/Landing";
+import GarnishmentOrders from "./pages/GarnishmentOrders";
 
 const queryClient = new QueryClient();
 
@@ -24,6 +25,7 @@ const App = () => (
           <Routes>
             <Route path="/landing" element={<Landing />} />
             <Route path="/dashboard" element={<Index />} />
+            <Route path="/garnishment-orders" element={<GarnishmentOrders />} />
             <Route path="/add-garnishment" element={<AddGarnishment />} />
             <Route path="/garnishment/:id" element={<GarnishmentDetails />} />
             <Route path="/team/:teamId" element={<TeamOrders />} />

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   Table, 
@@ -12,6 +12,14 @@ import { Button } from '@/components/ui/button';
 import { WorkflowStage, workflowStages } from './GarnishmentWorkflowTracker';
 import { format, parseISO, isValid } from 'date-fns';
 import { ExternalLink } from 'lucide-react';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 export interface GarnishmentOrder {
   id: string;
@@ -26,9 +34,12 @@ export interface GarnishmentOrder {
 
 interface GarnishmentTableProps {
   orders: GarnishmentOrder[];
+  itemsPerPage?: number;
 }
 
-const GarnishmentTable: React.FC<GarnishmentTableProps> = ({ orders }) => {
+const GarnishmentTable: React.FC<GarnishmentTableProps> = ({ orders, itemsPerPage = 10 }) => {
+  const [currentPage, setCurrentPage] = useState(1);
+  
   const getStageName = (stageId: WorkflowStage) => {
     const stage = workflowStages.find(s => s.id === stageId);
     return stage ? stage.label : 'Unknown';
@@ -54,6 +65,53 @@ const GarnishmentTable: React.FC<GarnishmentTableProps> = ({ orders }) => {
     }
   };
   
+  const totalPages = Math.ceil(orders.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedOrders = orders.slice(startIndex, startIndex + itemsPerPage);
+  
+  const goToPage = (page: number) => {
+    setCurrentPage(page);
+  };
+  
+  const goToPrevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
+  
+  const goToNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+  
+  const renderPaginationItems = () => {
+    const items = [];
+    
+    const maxPagesToShow = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+    let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+    
+    if (endPage - startPage + 1 < maxPagesToShow) {
+      startPage = Math.max(1, endPage - maxPagesToShow + 1);
+    }
+    
+    for (let i = startPage; i <= endPage; i++) {
+      items.push(
+        <PaginationItem key={i}>
+          <PaginationLink
+            onClick={() => goToPage(i)}
+            isActive={currentPage === i}
+          >
+            {i}
+          </PaginationLink>
+        </PaginationItem>
+      );
+    }
+    
+    return items;
+  };
+  
   return (
     <div className="rounded-md border bg-white overflow-hidden">
       <Table>
@@ -70,14 +128,14 @@ const GarnishmentTable: React.FC<GarnishmentTableProps> = ({ orders }) => {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {orders.length === 0 ? (
+          {paginatedOrders.length === 0 ? (
             <TableRow>
               <TableCell colSpan={8} className="h-24 text-center text-gray-500">
                 No garnishment orders found
               </TableCell>
             </TableRow>
           ) : (
-            orders.map((order) => (
+            paginatedOrders.map((order) => (
               <TableRow key={order.id}>
                 <TableCell className="font-medium">{order.caseNumber}</TableCell>
                 <TableCell>{order.customerName}</TableCell>
@@ -115,6 +173,24 @@ const GarnishmentTable: React.FC<GarnishmentTableProps> = ({ orders }) => {
           )}
         </TableBody>
       </Table>
+      
+      {totalPages > 1 && (
+        <div className="py-4 border-t">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious onClick={goToPrevPage} className="cursor-pointer" />
+              </PaginationItem>
+              
+              {renderPaginationItems()}
+              
+              <PaginationItem>
+                <PaginationNext onClick={goToNextPage} className="cursor-pointer" />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
+      )}
     </div>
   );
 };

@@ -22,7 +22,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const getActiveTeam = () => {
     const path = location.pathname;
     
-    if (path === '/dashboard') {
+    if (path === '/dashboard' || path === '/garnishment-orders') {
       return 'orders';
     }
     
@@ -82,7 +82,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             <div className="flex -mb-px overflow-x-auto">
               {activeTeam === 'orders' && (
                 <Link 
-                  to="/dashboard"
+                  to="/garnishment-orders"
                   className={`py-4 px-6 font-medium flex items-center space-x-2 border-b-2 border-bank text-bank`}
                 >
                   <FileText className="h-4 w-4" />

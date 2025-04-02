@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Button } from '@/components/ui/button';
 import { FileText, User, Shield, Scale, MessageSquare } from 'lucide-react';
-import { WorkflowStage } from '@/components/GarnishmentWorkflowTracker';
 import { motion } from 'framer-motion';
 
 // Team options for the navigation
@@ -26,7 +25,7 @@ const Landing = () => {
     if (!selectedOption) return;
     
     if (selectedOption === 'orders') {
-      navigate('/');
+      navigate('/garnishment-orders');
     } else {
       navigate(`/team/${selectedOption}`);
     }
