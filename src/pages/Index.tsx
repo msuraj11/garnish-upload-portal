@@ -4,11 +4,12 @@ import Layout from '@/components/Layout';
 import { useGarnishment } from '@/context/GarnishmentContext';
 import GarnishmentTable from '@/components/GarnishmentTable';
 import { Button } from '@/components/ui/button';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { PlusCircle } from 'lucide-react';
 
 const Index = () => {
   const { orders } = useGarnishment();
+  const location = useLocation();
 
   return (
     <Layout>
@@ -19,12 +20,12 @@ const Index = () => {
             Manage and track garnishment court orders in the system
           </p>
         </div>
-        {/* <Button asChild className="bg-bank hover:bg-bank-dark">
+        <Button asChild className="bg-bank hover:bg-bank-dark">
           <Link to="/add-garnishment" className="flex items-center gap-2">
             <PlusCircle className="h-4 w-4" />
             Add New Order
           </Link>
-        </Button> */}
+        </Button>
       </div>
       
       <GarnishmentTable orders={orders} />
