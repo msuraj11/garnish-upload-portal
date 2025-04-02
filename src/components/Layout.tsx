@@ -74,7 +74,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
               </Link>
             ))}
             
-            <Link 
+            {/* <Link 
               to="/add-garnishment"
               className={`py-4 px-6 font-medium flex items-center space-x-2 border-b-2 ${
                 location.pathname === '/add-garnishment' 
@@ -84,7 +84,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
             >
               <PlusCircle className="h-4 w-4" />
               <span>Add New Order</span>
-            </Link>
+            </Link> */}
           </div>
         </div>
       </nav>

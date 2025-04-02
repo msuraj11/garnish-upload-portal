@@ -146,7 +146,7 @@ const GarnishmentDetails = () => {
               </div>
               <div>
                 <p className="text-sm text-gray-500">Amount</p>
-                <p className="font-medium">${order.amount.toLocaleString()}</p>
+                <p className="font-medium">{order.amount.toLocaleString('de-DE')} €</p>
               </div>
               <div>
                 <p className="text-sm text-gray-500">Date Received</p>

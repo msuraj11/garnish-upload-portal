@@ -82,7 +82,7 @@ const GarnishmentTable: React.FC<GarnishmentTableProps> = ({ orders }) => {
                 <TableCell className="font-medium">{order.caseNumber}</TableCell>
                 <TableCell>{order.customerName}</TableCell>
                 <TableCell>{order.accountNumber}</TableCell>
-                <TableCell>${order.amount.toLocaleString()}</TableCell>
+                <TableCell>{order.amount.toLocaleString('de-DE')} €</TableCell>
                 <TableCell>{formatDate(order.dateReceived)}</TableCell>
                 <TableCell>{formatDate(order.dueDate)}</TableCell>
                 <TableCell>
