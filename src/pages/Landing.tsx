@@ -8,11 +8,11 @@ import { motion } from 'framer-motion';
 
 // Team options for the navigation
 const teamOptions: { label: string; value: string; icon: React.ElementType }[] = [
-  { label: 'Garnishment Orders', value: 'orders', icon: FileText },
-  { label: 'Garnishment Case Management', value: 'case_management', icon: User },
-  { label: 'Legal Team', value: 'legal_team', icon: Scale },
-  { label: 'Compliance Team', value: 'compliance_team', icon: Shield },
-  { label: 'Customer Management', value: 'customer_management', icon: MessageSquare }
+  { label: 'Garnishment Manger', value: 'orders', icon: FileText },
+  { label: 'Garnishment Case User', value: 'case_management', icon: User },
+  { label: 'Legal User', value: 'legal_team', icon: Scale },
+  { label: 'Compliance User', value: 'compliance_team', icon: Shield },
+  { label: 'CRM User', value: 'customer_management', icon: MessageSquare }
 ];
 
 const Landing = () => {

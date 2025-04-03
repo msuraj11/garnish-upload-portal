@@ -8,11 +8,11 @@ import { Button } from './ui/button';
 
 // Team options for the navigation
 const teamOptions: { label: string; value: string; icon: React.ElementType }[] = [
-  { label: 'Garnishment Orders', value: 'orders', icon: FileText },
-  { label: 'Garnishment Case Management', value: 'case_management', icon: User },
-  { label: 'Legal Team', value: 'legal_team', icon: Scale },
-  { label: 'Compliance Team', value: 'compliance_team', icon: Shield },
-  { label: 'Customer Management', value: 'customer_management', icon: MessageSquare }
+  { label: 'Garnishment Manger', value: 'orders', icon: FileText },
+  { label: 'Garnishment Case User', value: 'case_management', icon: User },
+  { label: 'Legal User', value: 'legal_team', icon: Scale },
+  { label: 'Compliance User', value: 'compliance_team', icon: Shield },
+  { label: 'CRM User', value: 'customer_management', icon: MessageSquare }
 ];
 
 const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -91,7 +91,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                   className={`py-4 px-6 font-medium flex items-center space-x-2 border-b-2 border-bank text-bank`}
                 >
                   <FileText className="h-4 w-4" />
-                  <span>Garnishment Orders</span>
+                  <span>Garnishment Manger</span>
                 </Link>
               )}
               

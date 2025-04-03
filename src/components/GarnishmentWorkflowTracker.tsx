@@ -1,5 +1,5 @@
 import React from 'react';
-import { Check, File, User, Shield, MessageSquare, Mail } from 'lucide-react';
+import { Check, File, User, Shield, MessageSquare, Mail, Scale } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 
 export type WorkflowStage = 
@@ -30,7 +30,7 @@ export const workflowStages: WorkflowStageInfo[] = [
   {
     id: 'legal_team',
     label: 'Bank Legal Team',
-    icon: Shield
+    icon: Scale
   },
   {
     id: 'compliance_team',
