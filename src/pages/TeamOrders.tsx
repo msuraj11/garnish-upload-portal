@@ -5,7 +5,6 @@ import Layout from '@/components/Layout';
 import { useGarnishment } from '@/context/GarnishmentContext';
 import GarnishmentTable from '@/components/GarnishmentTable';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
 import { workflowStages, WorkflowStage } from '@/components/GarnishmentWorkflowTracker';
 
 const TeamOrders = () => {
@@ -38,14 +37,6 @@ const TeamOrders = () => {
   return (
     <Layout>
       <div className="mb-6">
-        <Button 
-          variant="outline" 
-          onClick={() => navigate('/')}
-          className="mb-4"
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" /> Back to All Orders
-        </Button>
-        
         <div>
           <h1 className="text-2xl font-bold text-bank-dark">
             {team?.label} Orders

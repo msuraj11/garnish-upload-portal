@@ -41,7 +41,7 @@ const GarnishmentDetails = () => {
           <h1 className="text-2xl font-bold text-gray-800 mb-4">Order Not Found</h1>
           <p className="text-gray-600 mb-6">The garnishment order you're looking for doesn't exist.</p>
           <Button onClick={() => navigate('/')} className="bg-bank">
-            Back to Orders
+            Back to Home
           </Button>
         </div>
       </Layout>
@@ -67,13 +67,6 @@ const GarnishmentDetails = () => {
   return (
     <Layout>
       <div className="mb-6">
-        <Button 
-          variant="outline" 
-          onClick={() => navigate('/')}
-          className="mb-4"
-        >
-          <ArrowLeft className="h-4 w-4 mr-2" /> Back to Orders
-        </Button>
         
         <div className="flex flex-col md:flex-row justify-between md:items-center">
           <div>

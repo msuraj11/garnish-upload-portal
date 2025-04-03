@@ -1,9 +1,10 @@
 
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { PlusCircle, FileText, User, Shield, Scale, MessageSquare } from 'lucide-react';
+import { ArrowLeft, FileText, User, Shield, Scale, MessageSquare } from 'lucide-react';
 import { WorkflowStage } from './GarnishmentWorkflowTracker';
 import { motion } from 'framer-motion';
+import { Button } from './ui/button';
 
 // Team options for the navigation
 const teamOptions: { label: string; value: string; icon: React.ElementType }[] = [
@@ -30,6 +31,10 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
       const teamId = path.split('/team/')[1];
       return teamId;
     }
+
+    if (path.startsWith('/garnishment/')) {
+      return 'details';
+    }
     
     return null;
   };
@@ -40,7 +45,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     <div className="min-h-screen bg-gray-100 flex flex-col">
       <motion.header 
         className="bg-bank-dark text-white shadow-md"
-        initial={{ height: location.pathname === '/landing' ? '100vh' : 'auto' }}
+        initial={{ height: location.pathname === '/' ? '100vh' : 'auto' }}
         animate={{ height: 'auto' }}
         transition={{ duration: 0.5 }}
       >
@@ -48,11 +53,11 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           <div className="flex items-center justify-between">
             <motion.div 
               className="flex items-center space-x-2"
-              initial={{ scale: location.pathname === '/landing' ? 2 : 1, x: location.pathname === '/landing' ? '50%' : 0 }}
+              initial={{ scale: location.pathname === '/' ? 2 : 1, x: location.pathname === '/' ? '50%' : 0 }}
               animate={{ scale: 1, x: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <Link to="/landing">
+              <Link to="/">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
@@ -67,7 +72,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                   <polyline points="9 22 9 12 15 12 15 22"></polyline>
                 </svg>
               </Link>
-              <Link to="/landing" className="text-xl font-bold">Bank Portal</Link>
+              <Link to="/" className="text-xl font-bold">Bank Portal</Link>
             </motion.div>
             <div className="text-sm">
               <span className="opacity-75">Garnishment Processing</span>
@@ -76,10 +81,10 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
         </div>
       </motion.header>
 
-      {location.pathname !== '/landing' && (
+      {location.pathname !== '/' && (
         <nav className="bg-white border-b border-gray-200">
           <div className="container mx-auto px-6">
-            <div className="flex -mb-px overflow-x-auto">
+            <div className="flex -mb-px overflow-x-auto justify-between">
               {activeTeam === 'orders' && (
                 <Link 
                   to="/garnishment-orders"
@@ -102,17 +107,22 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                   </Link>
                 ))
               )}
-              
+              {activeTeam && activeTeam === 'details' && (
+                <Button
+                  onClick={() => navigate(-1)}
+                  variant="outline"
+                  className="mt-2"
+                >
+                  <ArrowLeft className="h-4 w-4" />
+                  Back
+                </Button>
+              )}
               <Link 
-                to="/add-garnishment"
-                className={`py-4 px-6 font-medium flex items-center space-x-2 border-b-2 ${
-                  location.pathname === '/add-garnishment' 
-                    ? 'border-bank text-bank' 
-                    : 'border-transparent text-gray-500 hover:text-bank hover:border-bank-light'
-                }`}
+                to="/"
+                className="py-4 px-6 font-medium flex items-center space-x-2 border-b-2 border-transparent text-gray-500 hover:text-bank hover:border-bank-light"
               >
-                <PlusCircle className="h-4 w-4" />
-                <span>Add New Order</span>
+                <ArrowLeft className="h-4 w-4" />
+                <span>Choose Persona</span>
               </Link>
             </div>
           </div>
