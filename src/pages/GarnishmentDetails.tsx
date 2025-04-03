@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
@@ -121,7 +120,6 @@ const GarnishmentDetails = () => {
       
       toast.error(`Order moved back to ${workflowStages[currentIndex - 1].label} stage`);
     } else {
-      // If we're at the first stage and can't go back
       addTimelineEvent({
         orderId: order.id,
         type: 'stage_change',
@@ -145,7 +143,6 @@ const GarnishmentDetails = () => {
     setShowDocument(true);
   };
   
-  // Get timeline events for this order
   const timeline = order.timeline || [];
   
   return (
@@ -359,7 +356,6 @@ const GarnishmentDetails = () => {
         </Card>
       </div>
       
-      {/* Stage Transition Dialog */}
       <Dialog open={isStageDialogOpen} onOpenChange={setIsStageDialogOpen}>
         <DialogContent>
           <DialogHeader>
@@ -383,7 +379,7 @@ const GarnishmentDetails = () => {
               variant="outline" 
               onClick={handleRejectStage}
               className="flex items-center"
-              disabled={isFirstStage}
+              disabled={isFirstStage || !comments.trim()}
             >
               <XCircle className="h-4 w-4 mr-2" />
               Reject {isFirstStage && "(Already at first stage)"}
@@ -391,7 +387,7 @@ const GarnishmentDetails = () => {
             <Button 
               onClick={handleApproveStage} 
               className="bg-bank hover:bg-bank-dark flex items-center"
-              disabled={isLastStage}
+              disabled={isLastStage || !comments.trim()}
             >
               <CheckCircle className="h-4 w-4 mr-2" />
               Approve
