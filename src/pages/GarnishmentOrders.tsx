@@ -3,6 +3,7 @@ import React from 'react';
 import Layout from '@/components/Layout';
 import { useGarnishment } from '@/context/GarnishmentContext';
 import GarnishmentTable from '@/components/GarnishmentTable';
+import GarnishmentCharts from '@/components/GarnishmentCharts';
 
 const GarnishmentOrders = () => {
   const { orders } = useGarnishment();
@@ -17,6 +18,8 @@ const GarnishmentOrders = () => {
           </p>
         </div>
       </div>
+      
+      <GarnishmentCharts />
       
       <GarnishmentTable orders={orders} itemsPerPage={5} />
     </Layout>
