@@ -89,7 +89,7 @@ const Landing = () => {
                 disabled={!selectedOption}
                 className="w-full bg-bank hover:bg-bank-dark transition-colors"
               >
-                Continue
+                Login
               </Button>
             </form>
           </div>
