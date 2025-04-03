@@ -2,19 +2,34 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { GarnishmentOrder } from '@/components/GarnishmentTable';
 import { WorkflowStage } from '@/components/GarnishmentWorkflowTracker';
 
+export interface TimelineEvent {
+  orderId: string;
+  type: 'stage_change' | 'note' | 'action';
+  title: string;
+  description: string;
+  status: 'approved' | 'rejected' | 'pending';
+  timestamp: Date;
+}
+
+// Extend the GarnishmentOrder type to include timeline
+export interface GarnishmentOrderWithTimeline extends GarnishmentOrder {
+  timeline?: TimelineEvent[];
+}
+
 interface GarnishmentContextType {
-  orders: GarnishmentOrder[];
+  orders: GarnishmentOrderWithTimeline[];
   addOrder: (order: Omit<GarnishmentOrder, 'id' | 'dateReceived' | 'currentStage' | 'dueDate'>) => GarnishmentOrder;
-  getOrderById: (id: string) => GarnishmentOrder | undefined;
+  getOrderById: (id: string) => GarnishmentOrderWithTimeline | undefined;
   updateOrderStage: (id: string, newStage: WorkflowStage) => void;
   getOrdersByStage: (stage: WorkflowStage) => GarnishmentOrder[];
   getSamplePdfUrl: () => string;
+  addTimelineEvent: (event: TimelineEvent) => void;
 }
 
 const GarnishmentContext = createContext<GarnishmentContextType | undefined>(undefined);
 
 // Sample data with updated stage values
-const initialOrders: GarnishmentOrder[] = [
+const initialOrders: GarnishmentOrderWithTimeline[] = [
   {
     id: '1',
     caseNumber: 'GRN-2023-001',
@@ -148,7 +163,7 @@ const initialOrders: GarnishmentOrder[] = [
 ];
 
 // Helper function to parse dates in stored orders
-const parseStoredOrders = (storedOrders: any[]): GarnishmentOrder[] => {
+const parseStoredOrders = (storedOrders: any[]): GarnishmentOrderWithTimeline[] => {
   return storedOrders.map(order => {
     // Convert old stage IDs to new ones
     let currentStage = order.currentStage;
@@ -161,13 +176,20 @@ const parseStoredOrders = (storedOrders: any[]): GarnishmentOrder[] => {
       // Ensure dates are proper Date objects
       dateReceived: new Date(order.dateReceived),
       dueDate: new Date(order.dueDate),
-      currentStage: currentStage
+      currentStage: currentStage,
+      // Parse timeline events if they exist
+      timeline: order.timeline 
+        ? order.timeline.map((event: any) => ({
+            ...event,
+            timestamp: new Date(event.timestamp)
+          }))
+        : []
     };
   });
 };
 
 export const GarnishmentProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [orders, setOrders] = useState<GarnishmentOrder[]>(() => {
+  const [orders, setOrders] = useState<GarnishmentOrderWithTimeline[]>(() => {
     // Try to load from localStorage
     const savedOrders = localStorage.getItem('garnishmentOrders');
     if (savedOrders) {
@@ -189,12 +211,13 @@ export const GarnishmentProvider: React.FC<{ children: React.ReactNode }> = ({ c
   }, [orders]);
 
   const addOrder = (newOrderData: Omit<GarnishmentOrder, 'id' | 'dateReceived' | 'currentStage' | 'dueDate'>) => {
-    const newOrder: GarnishmentOrder = {
+    const newOrder: GarnishmentOrderWithTimeline = {
       ...newOrderData,
       id: `${orders.length + 1}`,
       dateReceived: new Date(),
       dueDate: new Date(new Date().setMonth(new Date().getMonth() + 1)), // Due date 1 month from now
-      currentStage: 'document_management'
+      currentStage: 'document_management',
+      timeline: []
     };
     
     setOrders(prevOrders => [...prevOrders, newOrder]);
@@ -223,6 +246,19 @@ export const GarnishmentProvider: React.FC<{ children: React.ReactNode }> = ({ c
     return '/sample-garnishment-order.pdf';
   };
 
+  const addTimelineEvent = (event: TimelineEvent) => {
+    setOrders(prevOrders => 
+      prevOrders.map(order => 
+        order.id === event.orderId 
+          ? { 
+              ...order, 
+              timeline: [...(order.timeline || []), event] 
+            } 
+          : order
+      )
+    );
+  };
+
   return (
     <GarnishmentContext.Provider value={{ 
       orders, 
@@ -230,7 +266,8 @@ export const GarnishmentProvider: React.FC<{ children: React.ReactNode }> = ({ c
       getOrderById, 
       updateOrderStage,
       getOrdersByStage,
-      getSamplePdfUrl
+      getSamplePdfUrl,
+      addTimelineEvent
     }}>
       {children}
     </GarnishmentContext.Provider>

@@ -8,8 +8,26 @@ import GarnishmentWorkflowTracker, { WorkflowStage, workflowStages } from '@/com
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/sonner';
-import { ArrowLeft, FileText, User, CalendarCheck, Clock, FileIcon } from 'lucide-react';
+import { 
+  ArrowLeft, 
+  FileText, 
+  User, 
+  CalendarCheck, 
+  Clock, 
+  FileIcon, 
+  CheckCircle, 
+  XCircle 
+} from 'lucide-react';
 import PDFPreview from '@/components/PDFPreview';
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogDescription, 
+  DialogFooter, 
+  DialogHeader, 
+  DialogTitle 
+} from '@/components/ui/dialog';
+import { Textarea } from '@/components/ui/textarea';
 
 const formatDate = (date: Date | string, formatString = 'MMM d, yyyy') => {
   try {
@@ -29,8 +47,10 @@ const formatDate = (date: Date | string, formatString = 'MMM d, yyyy') => {
 const GarnishmentDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { getOrderById, updateOrderStage, getSamplePdfUrl } = useGarnishment();
+  const { getOrderById, updateOrderStage, getSamplePdfUrl, addTimelineEvent } = useGarnishment();
   const [showDocument, setShowDocument] = useState(false);
+  const [isStageDialogOpen, setIsStageDialogOpen] = useState(false);
+  const [comments, setComments] = useState('');
   
   const order = getOrderById(id || '');
   
@@ -48,21 +68,85 @@ const GarnishmentDetails = () => {
     );
   }
   
-  const handleMoveToNextStage = () => {
+  const handleOpenStageDialog = () => {
+    setIsStageDialogOpen(true);
+  };
+  
+  const handleApproveStage = () => {
     const currentIndex = workflowStages.findIndex(stage => stage.id === order.currentStage);
     
     if (currentIndex < workflowStages.length - 1) {
       const nextStage = workflowStages[currentIndex + 1].id;
       updateOrderStage(order.id, nextStage);
+      
+      const commentText = comments.trim() 
+        ? comments 
+        : `Approved and advanced to ${workflowStages[currentIndex + 1].label}`;
+      
+      addTimelineEvent({
+        orderId: order.id,
+        type: 'stage_change',
+        title: 'Stage Advanced',
+        description: commentText,
+        status: 'approved',
+        timestamp: new Date()
+      });
+      
       toast.success(`Order moved to ${workflowStages[currentIndex + 1].label} stage`);
     }
+    
+    setComments('');
+    setIsStageDialogOpen(false);
+  };
+  
+  const handleRejectStage = () => {
+    const currentIndex = workflowStages.findIndex(stage => stage.id === order.currentStage);
+    
+    if (currentIndex > 0) {
+      const prevStage = workflowStages[currentIndex - 1].id;
+      updateOrderStage(order.id, prevStage);
+      
+      const commentText = comments.trim() 
+        ? comments 
+        : `Rejected and moved back to ${workflowStages[currentIndex - 1].label}`;
+      
+      addTimelineEvent({
+        orderId: order.id,
+        type: 'stage_change',
+        title: 'Stage Rejected',
+        description: commentText,
+        status: 'rejected',
+        timestamp: new Date()
+      });
+      
+      toast.error(`Order moved back to ${workflowStages[currentIndex - 1].label} stage`);
+    } else {
+      // If we're at the first stage and can't go back
+      addTimelineEvent({
+        orderId: order.id,
+        type: 'stage_change',
+        title: 'Stage Rejected',
+        description: comments.trim() ? comments : 'Rejected but kept at initial stage',
+        status: 'rejected',
+        timestamp: new Date()
+      });
+      
+      toast.error('Already at first stage, rejection noted but stage not changed');
+    }
+    
+    setComments('');
+    setIsStageDialogOpen(false);
   };
   
   const isLastStage = order.currentStage === 'outbound_communication';
+  const isFirstStage = order.currentStage === 'document_management';
 
   const handleShowDocument = () => {
     setShowDocument(true);
   };
+  
+  // Get timeline events for this order
+  const timeline = order.timeline || [];
   
   return (
     <Layout>
@@ -90,7 +174,7 @@ const GarnishmentDetails = () => {
             
             {!isLastStage && (
               <Button 
-                onClick={handleMoveToNextStage} 
+                onClick={handleOpenStageDialog} 
                 className="bg-bank hover:bg-bank-dark"
               >
                 Advance to Next Stage
@@ -220,6 +304,35 @@ const GarnishmentDetails = () => {
                 </div>
               </div>
               
+              {timeline.map((event, index) => (
+                <div className="flex" key={index}>
+                  <div className="mr-4 flex flex-col items-center">
+                    <div className={`h-10 w-10 rounded-full flex items-center justify-center text-white
+                      ${event.status === 'approved' ? 'bg-green-500' : 
+                        event.status === 'rejected' ? 'bg-red-500' : 'bg-gray-400'}`}>
+                      {event.status === 'approved' ? 
+                        <CheckCircle className="h-5 w-5" /> : 
+                        event.status === 'rejected' ? 
+                          <XCircle className="h-5 w-5" /> : 
+                          <Clock className="h-5 w-5" />
+                      }
+                    </div>
+                    {index < timeline.length - 1 && (
+                      <div className="h-full w-0.5 bg-gray-200 mt-2"></div>
+                    )}
+                  </div>
+                  <div className={index < timeline.length - 1 ? "pb-6" : ""}>
+                    <p className="text-sm font-medium">{event.title}</p>
+                    <p className="text-xs text-gray-500">
+                      {formatDate(event.timestamp, 'MMM d, yyyy h:mm a')}
+                    </p>
+                    <p className="mt-1 text-sm text-gray-600">
+                      {event.description}
+                    </p>
+                  </div>
+                </div>
+              ))}
+              
               <div className="flex">
                 <div className="mr-4 flex flex-col items-center">
                   <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500">
@@ -245,6 +358,47 @@ const GarnishmentDetails = () => {
           </CardFooter>
         </Card>
       </div>
+      
+      {/* Stage Transition Dialog */}
+      <Dialog open={isStageDialogOpen} onOpenChange={setIsStageDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Advance Workflow Stage</DialogTitle>
+            <DialogDescription>
+              Add comments before advancing or rejecting this stage. Your comments will be recorded in the timeline.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="py-4">
+            <Textarea
+              placeholder="Add your comments here..."
+              value={comments}
+              onChange={(e) => setComments(e.target.value)}
+              className="min-h-[120px]"
+            />
+          </div>
+          
+          <DialogFooter className="gap-2 sm:gap-0">
+            <Button 
+              variant="outline" 
+              onClick={handleRejectStage}
+              className="flex items-center"
+              disabled={isFirstStage}
+            >
+              <XCircle className="h-4 w-4 mr-2" />
+              Reject {isFirstStage && "(Already at first stage)"}
+            </Button>
+            <Button 
+              onClick={handleApproveStage} 
+              className="bg-bank hover:bg-bank-dark flex items-center"
+              disabled={isLastStage}
+            >
+              <CheckCircle className="h-4 w-4 mr-2" />
+              Approve
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Layout>
   );
 };
