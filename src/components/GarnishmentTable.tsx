@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { 
   Table, 
   TableHeader, 
@@ -38,6 +38,9 @@ interface GarnishmentTableProps {
 }
 
 const GarnishmentTable: React.FC<GarnishmentTableProps> = ({ orders, itemsPerPage = 10 }) => {
+  const location = useLocation();
+  const path = location.pathname;
+  const hideCurrentStage = path.startsWith('/team/');
   const [currentPage, setCurrentPage] = useState(1);
   
   const getStageName = (stageId: WorkflowStage) => {
@@ -123,7 +126,7 @@ const GarnishmentTable: React.FC<GarnishmentTableProps> = ({ orders, itemsPerPag
             <TableHead>Amount</TableHead>
             <TableHead>Date Received</TableHead>
             <TableHead>Due Date</TableHead>
-            <TableHead>Current Stage</TableHead>
+            {!hideCurrentStage && <TableHead>Current Stage</TableHead>}
             <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
@@ -143,19 +146,21 @@ const GarnishmentTable: React.FC<GarnishmentTableProps> = ({ orders, itemsPerPag
                 <TableCell>{order.amount.toLocaleString('de-DE')} €</TableCell>
                 <TableCell>{formatDate(order.dateReceived)}</TableCell>
                 <TableCell>{formatDate(order.dueDate)}</TableCell>
-                <TableCell>
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                    order.currentStage === 'outbound_communication' ? 'bg-green-100 text-green-800' :
-                    order.currentStage === 'document_management' ? 'bg-blue-100 text-blue-800' :
-                    order.currentStage === 'legal_team' ? 'bg-purple-100 text-purple-800' :
-                    order.currentStage === 'compliance_team' ? 'bg-yellow-100 text-yellow-800' :
-                    order.currentStage === 'case_management' ? 'bg-indigo-100 text-indigo-800' :
-                    order.currentStage === 'customer_management' ? 'bg-orange-100 text-orange-800' :
-                    'bg-gray-100 text-gray-800'
-                  }`}>
-                    {getStageName(order.currentStage)}
-                  </span>
-                </TableCell>
+                {!hideCurrentStage && (
+                  <TableCell>
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                      order.currentStage === 'outbound_communication' ? 'bg-green-100 text-green-800' :
+                      order.currentStage === 'document_management' ? 'bg-blue-100 text-blue-800' :
+                      order.currentStage === 'legal_team' ? 'bg-purple-100 text-purple-800' :
+                      order.currentStage === 'compliance_team' ? 'bg-yellow-100 text-yellow-800' :
+                      order.currentStage === 'case_management' ? 'bg-indigo-100 text-indigo-800' :
+                      order.currentStage === 'customer_management' ? 'bg-orange-100 text-orange-800' :
+                      'bg-gray-100 text-gray-800'
+                    }`}>
+                      {getStageName(order.currentStage)}
+                    </span>
+                  </TableCell>
+                )}
                 <TableCell className="text-right">
                   <Button 
                     variant="outline" 

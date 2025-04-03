@@ -29,12 +29,12 @@ export const workflowStages: WorkflowStageInfo[] = [
   },
   {
     id: 'legal_team',
-    label: 'Bank Legal Team',
+    label: 'Legal Team',
     icon: Scale
   },
   {
     id: 'compliance_team',
-    label: 'Bank Compliance Team',
+    label: 'Compliance Team',
     icon: Shield
   },
   {

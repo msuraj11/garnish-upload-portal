@@ -47,7 +47,7 @@ const TeamOrders = () => {
         </div>
       </div>
       
-      <GarnishmentTable orders={orders} />
+      <GarnishmentTable orders={orders} itemsPerPage={5} />
     </Layout>
   );
 };

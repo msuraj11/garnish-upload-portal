@@ -1,8 +1,7 @@
 
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ArrowLeft, FileText, User, Shield, Scale, MessageSquare } from 'lucide-react';
-import { WorkflowStage } from './GarnishmentWorkflowTracker';
+import { ArrowLeft, FileText, User, Shield, Scale, MessageSquare, LogOut } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Button } from './ui/button';
 
@@ -72,7 +71,7 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                   <polyline points="9 22 9 12 15 12 15 22"></polyline>
                 </svg>
               </Link>
-              <Link to="/" className="text-xl font-bold">Bank Portal</Link>
+              <Link to="/" className="text-xl font-bold">Portal</Link>
             </motion.div>
             <div className="text-sm">
               <span className="opacity-75">Garnishment Processing</span>
@@ -121,8 +120,8 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                 to="/"
                 className="py-4 px-6 font-medium flex items-center space-x-2 border-b-2 border-transparent text-gray-500 hover:text-bank hover:border-bank-light"
               >
-                <ArrowLeft className="h-4 w-4" />
-                <span>Choose Persona</span>
+                <LogOut className="h-4 w-4" />
+                <span>Log Out</span>
               </Link>
             </div>
           </div>

@@ -138,6 +138,7 @@ const GarnishmentDetails = () => {
   
   const isLastStage = order.currentStage === 'outbound_communication';
   const isFirstStage = order.currentStage === 'document_management';
+  //const isLegalOrCompStage = ['legal_team', 'compliance_team'].includes(order.currentStage);
 
   const handleShowDocument = () => {
     setShowDocument(true);
