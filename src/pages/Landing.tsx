@@ -8,7 +8,7 @@ import { motion } from 'framer-motion';
 
 // Team options for the navigation
 const teamOptions: { label: string; value: string; icon: React.ElementType }[] = [
-  { label: 'Garnishment Manger', value: 'orders', icon: FileText },
+  { label: 'Garnishment Manager', value: 'orders', icon: FileText },
   { label: 'Garnishment Case User', value: 'case_management', icon: User },
   { label: 'Legal User', value: 'legal_team', icon: Scale },
   { label: 'Compliance User', value: 'compliance_team', icon: Shield },
