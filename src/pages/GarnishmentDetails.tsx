@@ -1,10 +1,10 @@
-
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
 import Layout from '@/components/Layout';
 import { useGarnishment } from '@/context/GarnishmentContext';
 import GarnishmentWorkflowTracker, { WorkflowStage, workflowStages } from '@/components/GarnishmentWorkflowTracker';
+import GarnishmentCharts from '@/components/GarnishmentCharts';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/sonner';
@@ -103,6 +103,8 @@ const GarnishmentDetails = () => {
       <div className="bg-white p-6 rounded-lg border border-gray-200 mb-8">
         <GarnishmentWorkflowTracker currentStage={order.currentStage} />
       </div>
+      
+      <GarnishmentCharts />
       
       {showDocument && (
         <div className="mb-8">
