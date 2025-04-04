@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { format, parseISO } from 'date-fns';
@@ -27,6 +28,7 @@ import {
   DialogTitle 
 } from '@/components/ui/dialog';
 import { Textarea } from '@/components/ui/textarea';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 const formatDate = (date: Date | string, formatString = 'MMM d, yyyy') => {
   try {
@@ -50,6 +52,7 @@ const GarnishmentDetails = () => {
   const [showDocument, setShowDocument] = useState(false);
   const [isStageDialogOpen, setIsStageDialogOpen] = useState(false);
   const [comments, setComments] = useState('');
+  const [selectedNextStage, setSelectedNextStage] = useState<WorkflowStage | null>(null);
   
   const order = getOrderById(id || '');
   
@@ -67,34 +70,69 @@ const GarnishmentDetails = () => {
     );
   }
   
+  const isCaseManagementStage = order.currentStage === 'case_management';
+  const isDecisionStage = ['legal_team', 'compliance_team', 'customer_management'].includes(order.currentStage);
+  
+  // Dynamic button label based on current stage
+  const getButtonLabel = () => {
+    if (isCaseManagementStage) {
+      return "Advance to Next Stage";
+    } else if (isDecisionStage) {
+      return "Submit a Decision";
+    } else {
+      return "Advance to Next Stage";
+    }
+  };
+  
   const handleOpenStageDialog = () => {
+    setComments('');
+    setSelectedNextStage(null);
     setIsStageDialogOpen(true);
   };
   
   const handleApproveStage = () => {
-    const currentIndex = workflowStages.findIndex(stage => stage.id === order.currentStage);
-    
-    if (currentIndex < workflowStages.length - 1) {
-      const nextStage = workflowStages[currentIndex + 1].id;
-      updateOrderStage(order.id, nextStage);
-      
-      const commentText = comments.trim() 
-        ? comments 
-        : `Approved and advanced to ${workflowStages[currentIndex + 1].label}`;
+    // For case management stage, use the selected next stage from radio button
+    if (isCaseManagementStage && selectedNextStage) {
+      updateOrderStage(order.id, selectedNextStage);
       
       addTimelineEvent({
         orderId: order.id,
         type: 'stage_change',
-        title: 'Stage Advanced',
-        description: commentText,
+        title: 'Stage Directed',
+        description: `Directed to ${workflowStages.find(stage => stage.id === selectedNextStage)?.label}. ${comments}`,
         status: 'approved',
         timestamp: new Date()
       });
       
-      toast.success(`Order moved to ${workflowStages[currentIndex + 1].label} stage`);
+      toast.success(`Order moved to ${workflowStages.find(stage => stage.id === selectedNextStage)?.label} stage`);
+    } 
+    // For other stages, follow the regular workflow
+    else {
+      const currentIndex = workflowStages.findIndex(stage => stage.id === order.currentStage);
+      
+      if (currentIndex < workflowStages.length - 1) {
+        const nextStage = workflowStages[currentIndex + 1].id;
+        updateOrderStage(order.id, nextStage);
+        
+        const commentText = comments.trim() 
+          ? comments 
+          : `Approved and advanced to ${workflowStages[currentIndex + 1].label}`;
+        
+        addTimelineEvent({
+          orderId: order.id,
+          type: 'stage_change',
+          title: 'Stage Advanced',
+          description: commentText,
+          status: 'approved',
+          timestamp: new Date()
+        });
+        
+        toast.success(`Order moved to ${workflowStages[currentIndex + 1].label} stage`);
+      }
     }
     
     setComments('');
+    setSelectedNextStage(null);
     setIsStageDialogOpen(false);
   };
   
@@ -138,13 +176,28 @@ const GarnishmentDetails = () => {
   
   const isLastStage = order.currentStage === 'outbound_communication';
   const isFirstStage = order.currentStage === 'document_management';
-  //const isLegalOrCompStage = ['legal_team', 'compliance_team'].includes(order.currentStage);
 
   const handleShowDocument = () => {
     setShowDocument(true);
   };
   
   const timeline = order.timeline || [];
+  
+  // Define the possible next stages for case management
+  const nextStageOptions = [
+    { id: 'legal_team', label: 'Legal Team' },
+    { id: 'compliance_team', label: 'Compliance Team' },
+    { id: 'customer_management', label: 'Customer Management' }
+  ];
+  
+  // Check if the action can be submitted
+  const canSubmitAction = () => {
+    if (isCaseManagementStage) {
+      return selectedNextStage !== null && comments.trim().length > 0;
+    } else {
+      return comments.trim().length > 0;
+    }
+  };
   
   return (
     <Layout>
@@ -175,7 +228,7 @@ const GarnishmentDetails = () => {
                 onClick={handleOpenStageDialog} 
                 className="bg-bank hover:bg-bank-dark"
               >
-                Advance to Next Stage
+                {getButtonLabel()}
               </Button>
             )}
           </div>
@@ -360,11 +413,37 @@ const GarnishmentDetails = () => {
       <Dialog open={isStageDialogOpen} onOpenChange={setIsStageDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Advance Workflow Stage</DialogTitle>
+            <DialogTitle>
+              {isCaseManagementStage 
+                ? "Select Next Processing Team" 
+                : "Advance Workflow Stage"}
+            </DialogTitle>
             <DialogDescription>
-              Add comments before advancing or rejecting this stage. Your comments will be recorded in the timeline.
+              {isCaseManagementStage 
+                ? "Choose one option to direct this order to the appropriate team." 
+                : "Add comments before advancing or rejecting this stage. Your comments will be recorded in the timeline."}
             </DialogDescription>
           </DialogHeader>
+          
+          {isCaseManagementStage && (
+            <div className="py-4">
+              <RadioGroup value={selectedNextStage || ""} onValueChange={(value) => setSelectedNextStage(value as WorkflowStage)} className="flex gap-4">
+                {nextStageOptions.map((option) => (
+                  <label
+                    key={option.id}
+                    className={`flex-1 flex items-center p-4 rounded-lg border cursor-pointer transition-colors ${
+                      selectedNextStage === option.id
+                        ? 'border-bank bg-bank-gray text-bank-dark'
+                        : 'border-gray-300 hover:bg-gray-50'
+                    }`}
+                  >
+                    <RadioGroupItem value={option.id} id={option.id} className="mr-2" />
+                    <span className="font-medium">{option.label}</span>
+                  </label>
+                ))}
+              </RadioGroup>
+            </div>
+          )}
           
           <div className="py-4">
             <Textarea
@@ -376,22 +455,24 @@ const GarnishmentDetails = () => {
           </div>
           
           <DialogFooter className="gap-2 sm:gap-0">
-            <Button 
-              variant="outline" 
-              onClick={handleRejectStage}
-              className="flex items-center"
-              disabled={isFirstStage || !comments.trim()}
-            >
-              <XCircle className="h-4 w-4 mr-2" />
-              Reject {isFirstStage && "(Already at first stage)"}
-            </Button>
+            {!isCaseManagementStage && (
+              <Button 
+                variant="outline" 
+                onClick={handleRejectStage}
+                className="flex items-center"
+                disabled={isFirstStage || !comments.trim()}
+              >
+                <XCircle className="h-4 w-4 mr-2" />
+                Reject {isFirstStage && "(Already at first stage)"}
+              </Button>
+            )}
             <Button 
               onClick={handleApproveStage} 
               className="bg-bank hover:bg-bank-dark flex items-center"
-              disabled={isLastStage || !comments.trim()}
+              disabled={!canSubmitAction() || isLastStage}
             >
               <CheckCircle className="h-4 w-4 mr-2" />
-              Approve
+              {isCaseManagementStage ? "Submit" : "Approve"}
             </Button>
           </DialogFooter>
         </DialogContent>
