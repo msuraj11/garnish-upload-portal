@@ -1,49 +1,21 @@
 
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { format, parseISO } from 'date-fns';
 import Layout from '@/components/Layout';
 import { useGarnishment } from '@/context/GarnishmentContext';
 import GarnishmentWorkflowTracker, { WorkflowStage, workflowStages } from '@/components/GarnishmentWorkflowTracker';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/sonner';
-import { 
-  ArrowLeft, 
-  FileText, 
-  User, 
-  CalendarCheck, 
-  Clock, 
-  FileIcon, 
-  CheckCircle, 
-  XCircle 
-} from 'lucide-react';
-import PDFPreview from '@/components/PDFPreview';
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogFooter, 
-  DialogHeader, 
-  DialogTitle 
-} from '@/components/ui/dialog';
-import { Textarea } from '@/components/ui/textarea';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { ArrowLeft, FileIcon } from 'lucide-react';
+import { formatDate } from '@/utils/dateUtils';
 
-const formatDate = (date: Date | string, formatString = 'MMM d, yyyy') => {
-  try {
-    if (date instanceof Date) {
-      return format(date, formatString);
-    }
-    else if (typeof date === 'string') {
-      return format(parseISO(date), formatString);
-    }
-    return 'Invalid date';
-  } catch (error) {
-    console.error('Error formatting date:', date, error);
-    return 'Invalid date';
-  }
-};
+// Import our new component modules
+import GarnishmentOrderInfo from '@/components/GarnishmentOrderInfo';
+import CustomerDetails from '@/components/CustomerDetails';
+import GarnishmentTimeline from '@/components/GarnishmentTimeline';
+import WorkflowAdvancementDialog from '@/components/WorkflowAdvancementDialog';
+import DocumentViewDialog from '@/components/DocumentViewDialog';
 
 const GarnishmentDetails = () => {
   const { id } = useParams<{ id: string }>();
@@ -72,6 +44,8 @@ const GarnishmentDetails = () => {
   
   const isCaseManagementStage = order.currentStage === 'case_management';
   const isDecisionStage = ['legal_team', 'compliance_team', 'customer_management'].includes(order.currentStage);
+  const isLastStage = order.currentStage === 'outbound_communication';
+  const isFirstStage = order.currentStage === 'document_management';
   
   // Dynamic button label based on current stage
   const getButtonLabel = () => {
@@ -173,36 +147,14 @@ const GarnishmentDetails = () => {
     setComments('');
     setIsStageDialogOpen(false);
   };
-  
-  const isLastStage = order.currentStage === 'outbound_communication';
-  const isFirstStage = order.currentStage === 'document_management';
 
   const handleShowDocument = () => {
     setShowDocument(true);
   };
   
-  const timeline = order.timeline || [];
-  
-  // Define the possible next stages for case management
-  const nextStageOptions = [
-    { id: 'legal_team', label: 'Legal Team' },
-    { id: 'compliance_team', label: 'Compliance Team' },
-    { id: 'customer_management', label: 'Customer Management' }
-  ];
-  
-  // Check if the action can be submitted
-  const canSubmitAction = () => {
-    if (isCaseManagementStage) {
-      return selectedNextStage !== null && comments.trim().length > 0;
-    } else {
-      return comments.trim().length > 0;
-    }
-  };
-  
   return (
     <Layout>
       <div className="mb-6">
-        
         <div className="flex flex-col md:flex-row justify-between md:items-center">
           <div>
             <h1 className="text-2xl font-bold text-bank-dark">
@@ -239,244 +191,31 @@ const GarnishmentDetails = () => {
         <GarnishmentWorkflowTracker currentStage={order.currentStage} />
       </div>
       
-      {showDocument && (
-        <div className="mb-8">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center">
-                <FileText className="h-5 w-5 mr-2 text-bank" />
-                Garnishment Document
-              </CardTitle>
-              <CardDescription>
-                Court order document for garnishment case {order.caseNumber}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="pdf-container">
-              <PDFPreview pdfUrl={getSamplePdfUrl()} />
-            </CardContent>
-          </Card>
-        </div>
-      )}
+      <DocumentViewDialog 
+        pdfUrl={getSamplePdfUrl()} 
+        caseNumber={order.caseNumber}
+        showDocument={showDocument}
+      />
       
       <div className="grid md:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <FileText className="h-5 w-5 mr-2 text-bank" />
-              Order Information
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p className="text-sm text-gray-500">Case Number</p>
-                <p className="font-medium">{order.caseNumber}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Amount</p>
-                <p className="font-medium">{order.amount.toLocaleString('de-DE')} €</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Date Received</p>
-                <p className="font-medium">{formatDate(order.dateReceived)}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Due Date</p>
-                <p className="font-medium">{formatDate(order.dueDate)}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Current Stage</p>
-                <p className="font-medium">
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                    order.currentStage === 'outbound_communication' ? 'bg-green-100 text-green-800' :
-                    order.currentStage === 'document_management' ? 'bg-blue-100 text-blue-800' :
-                    order.currentStage === 'legal_team' ? 'bg-purple-100 text-purple-800' :
-                    order.currentStage === 'compliance_team' ? 'bg-yellow-100 text-yellow-800' :
-                    order.currentStage === 'case_management' ? 'bg-indigo-100 text-indigo-800' :
-                    order.currentStage === 'customer_management' ? 'bg-orange-100 text-orange-800' :
-                    'bg-gray-100 text-gray-800'
-                  }`}>
-                    {workflowStages.find(stage => stage.id === order.currentStage)?.label}
-                  </span>
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <User className="h-5 w-5 mr-2 text-bank" />
-              Customer Details
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <p className="text-sm text-gray-500">Customer Name</p>
-                <p className="font-medium">{order.customerName}</p>
-              </div>
-              <div>
-                <p className="text-sm text-gray-500">Account Number</p>
-                <p className="font-medium">{order.accountNumber}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-        
-        <Card className="md:col-span-2">
-          <CardHeader>
-            <CardTitle className="flex items-center">
-              <Clock className="h-5 w-5 mr-2 text-bank" />
-              Processing Timeline
-            </CardTitle>
-            <CardDescription>
-              Recent activity and timeline for this garnishment order
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex">
-                <div className="mr-4 flex flex-col items-center">
-                  <div className="h-10 w-10 rounded-full bg-bank flex items-center justify-center text-white">
-                    <CalendarCheck className="h-5 w-5" />
-                  </div>
-                  <div className="h-full w-0.5 bg-gray-200 mt-2"></div>
-                </div>
-                <div className="pb-6">
-                  <p className="text-sm font-medium">Order Received</p>
-                  <p className="text-xs text-gray-500">
-                    {formatDate(order.dateReceived, 'MMM d, yyyy h:mm a')}
-                  </p>
-                  <p className="mt-1 text-sm text-gray-600">
-                    Garnishment order processed by document management team
-                  </p>
-                </div>
-              </div>
-              
-              {timeline.map((event, index) => (
-                <div className="flex" key={index}>
-                  <div className="mr-4 flex flex-col items-center">
-                    <div className={`h-10 w-10 rounded-full flex items-center justify-center text-white
-                      ${event.status === 'approved' ? 'bg-green-500' : 
-                        event.status === 'rejected' ? 'bg-red-500' : 'bg-gray-400'}`}>
-                      {event.status === 'approved' ? 
-                        <CheckCircle className="h-5 w-5" /> : 
-                        event.status === 'rejected' ? 
-                          <XCircle className="h-5 w-5" /> : 
-                          <Clock className="h-5 w-5" />
-                      }
-                    </div>
-                    {index < timeline.length - 1 && (
-                      <div className="h-full w-0.5 bg-gray-200 mt-2"></div>
-                    )}
-                  </div>
-                  <div className={index < timeline.length - 1 ? "pb-6" : ""}>
-                    <p className="text-sm font-medium">{event.title}</p>
-                    <p className="text-xs text-gray-500">
-                      {formatDate(event.timestamp, 'MMM d, yyyy h:mm a')}
-                    </p>
-                    <p className="mt-1 text-sm text-gray-600">
-                      {event.description}
-                    </p>
-                  </div>
-                </div>
-              ))}
-              
-              <div className="flex">
-                <div className="mr-4 flex flex-col items-center">
-                  <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500">
-                    <User className="h-5 w-5" />
-                  </div>
-                </div>
-                <div>
-                  <p className="text-sm font-medium">Current Stage: {workflowStages.find(stage => stage.id === order.currentStage)?.label}</p>
-                  <p className="text-xs text-gray-500">
-                    {formatDate(new Date(), 'MMM d, yyyy')}
-                  </p>
-                  <p className="mt-1 text-sm text-gray-600">
-                    Order is currently being processed in this stage
-                  </p>
-                </div>
-              </div>
-            </div>
-          </CardContent>
-          <CardFooter className="border-t pt-6">
-            <p className="text-xs text-gray-500">
-              For any updates or questions, please contact the garnishment processing team
-            </p>
-          </CardFooter>
-        </Card>
+        <GarnishmentOrderInfo order={order} formatDate={formatDate} />
+        <CustomerDetails order={order} />
+        <GarnishmentTimeline order={order} formatDate={formatDate} />
       </div>
       
-      <Dialog open={isStageDialogOpen} onOpenChange={setIsStageDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>
-              {isCaseManagementStage 
-                ? "Select Next Processing Team" 
-                : "Advance Workflow Stage"}
-            </DialogTitle>
-            <DialogDescription>
-              {isCaseManagementStage 
-                ? "Choose one option to direct this order to the appropriate team." 
-                : "Add comments before advancing or rejecting this stage. Your comments will be recorded in the timeline."}
-            </DialogDescription>
-          </DialogHeader>
-          
-          {isCaseManagementStage && (
-            <div className="py-4">
-              <RadioGroup value={selectedNextStage || ""} onValueChange={(value) => setSelectedNextStage(value as WorkflowStage)} className="flex gap-4">
-                {nextStageOptions.map((option) => (
-                  <label
-                    key={option.id}
-                    className={`flex-1 flex items-center p-4 rounded-lg border cursor-pointer transition-colors ${
-                      selectedNextStage === option.id
-                        ? 'border-bank bg-bank-gray text-bank-dark'
-                        : 'border-gray-300 hover:bg-gray-50'
-                    }`}
-                  >
-                    <RadioGroupItem value={option.id} id={option.id} className="mr-2" />
-                    <span className="font-medium">{option.label}</span>
-                  </label>
-                ))}
-              </RadioGroup>
-            </div>
-          )}
-          
-          <div className="py-4">
-            <Textarea
-              placeholder="Add your comments here..."
-              value={comments}
-              onChange={(e) => setComments(e.target.value)}
-              className="min-h-[120px]"
-            />
-          </div>
-          
-          <DialogFooter className="gap-2 sm:gap-0">
-            {!isCaseManagementStage && (
-              <Button 
-                variant="outline" 
-                onClick={handleRejectStage}
-                className="flex items-center"
-                disabled={isFirstStage || !comments.trim()}
-              >
-                <XCircle className="h-4 w-4 mr-2" />
-                Reject {isFirstStage && "(Already at first stage)"}
-              </Button>
-            )}
-            <Button 
-              onClick={handleApproveStage} 
-              className="bg-bank hover:bg-bank-dark flex items-center"
-              disabled={!canSubmitAction() || isLastStage}
-            >
-              <CheckCircle className="h-4 w-4 mr-2" />
-              {isCaseManagementStage ? "Submit" : "Approve"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <WorkflowAdvancementDialog
+        isOpen={isStageDialogOpen}
+        onOpenChange={setIsStageDialogOpen}
+        onApprove={handleApproveStage}
+        onReject={handleRejectStage}
+        comments={comments}
+        setComments={setComments}
+        currentStage={order.currentStage}
+        selectedNextStage={selectedNextStage}
+        setSelectedNextStage={setSelectedNextStage}
+        isFirstStage={isFirstStage}
+        isLastStage={isLastStage}
+      />
     </Layout>
   );
 };
