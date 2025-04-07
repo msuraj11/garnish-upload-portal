@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { GarnishmentOrder } from '@/components/GarnishmentTable';
 import { WorkflowStage } from '@/components/GarnishmentWorkflowTracker';
@@ -112,7 +113,8 @@ const initialOrders: GarnishmentOrderWithTimeline[] = [
   },
   {
     id: "6",
-    caseNumber: "DAVID L. WILSON",
+    caseNumber: "GRN-2023-006",
+    customerName: "DAVID L. WILSON",
     accountNumber: "DE42 6713 4194 0526 7777 00",
     dateReceived: new Date("2025-04-30T22:00:00.000Z"),
     dueDate: new Date("2025-06-19T22:00:00.000Z"),
@@ -126,7 +128,8 @@ const initialOrders: GarnishmentOrderWithTimeline[] = [
   },
   {
     id: "7",
-    caseNumber: "JANE DOE ENTERPRISES, INC.",
+    caseNumber: "GRN-2023-007",
+    customerName: "JANE DOE ENTERPRISES, INC.",
     accountNumber: "DE42 6713 4009 0505 7828 00",
     dateReceived: new Date("2025-04-30T22:00:00.000Z"),
     dueDate: new Date("2025-07-30T22:00:00.000Z"),
@@ -140,7 +143,8 @@ const initialOrders: GarnishmentOrderWithTimeline[] = [
   },
   {
     id: "8",
-    caseNumber: "Graf Linke e.V. GMBH",
+    caseNumber: "GRN-2023-008",
+    customerName: "Graf Linke e.V. GMBH",
     accountNumber: "DE56 4515 9294 0454 8165 00",
     dateReceived: new Date("2025-04-24T22:00:00.000Z"),
     dueDate: new Date("2025-10-04T22:00:00.000Z"),
@@ -154,7 +158,8 @@ const initialOrders: GarnishmentOrderWithTimeline[] = [
   },
   {
     id: "9",
-    caseNumber: "Dörr GMBH",
+    caseNumber: "GRN-2023-009",
+    customerName: "Dörr GMBH",
     accountNumber: "DE24 3419 6512 0262 8349 00",
     dateReceived: new Date("2025-04-26T22:00:00.000Z"),
     dueDate: new Date("2025-08-09T22:00:00.000Z"),
@@ -168,7 +173,8 @@ const initialOrders: GarnishmentOrderWithTimeline[] = [
   },
   {
     id: "10",
-    caseNumber: "Oderwald GMBH",
+    caseNumber: "GRN-2023-010",
+    customerName: "Oderwald GMBH",
     accountNumber: "DE2426 3004 8477 6371",
     dateReceived: new Date("2025-04-13T22:00:00.000Z"),
     dueDate: new Date("2025-06-14T22:00:00.000Z"),
@@ -182,7 +188,8 @@ const initialOrders: GarnishmentOrderWithTimeline[] = [
   },
   {
     id: "11",
-    caseNumber: "BEISPIEL BAU GMBH",
+    caseNumber: "GRN-2023-011",
+    customerName: "BEISPIEL BAU GMBH",
     accountNumber: "DE89 3704 0044 0532 0130 00",
     dateReceived: new Date("2025-05-04T22:00:00.000Z"),
     dueDate: new Date("2025-06-19T22:00:00.000Z"),
@@ -196,7 +203,8 @@ const initialOrders: GarnishmentOrderWithTimeline[] = [
   },
   {
     id: "12",
-    caseNumber: "Rust GMBH",
+    caseNumber: "GRN-2023-012",
+    customerName: "Rust GMBH",
     accountNumber: "DE7765 8509 5522 7806",
     dateReceived: new Date("2025-04-15T22:00:00.000Z"),
     dueDate: new Date("2025-05-31T23:00:00.000Z"),
@@ -210,7 +218,8 @@ const initialOrders: GarnishmentOrderWithTimeline[] = [
   },
   {
     id: "13",
-    caseNumber: "Rust GMBH",
+    caseNumber: "GRN-2023-013",
+    customerName: "Rust GMBH",
     accountNumber: "DE7765 8509 5522 7806",
     dateReceived: new Date("2025-04-15T22:00:00.000Z"),
     dueDate: new Date("2025-11-04T23:00:00.000Z"),
@@ -343,3 +352,4 @@ export const useGarnishment = () => {
   }
   return context;
 };
+
