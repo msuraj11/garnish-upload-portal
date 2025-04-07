@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { GarnishmentOrderWithTimeline } from '@/context/GarnishmentContext';
+import { GarnishmentOrderWithTimeline } from '@/types/garnishment';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { User, CreditCard, Building, MapPin } from 'lucide-react';
 

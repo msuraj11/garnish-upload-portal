@@ -20,6 +20,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination";
+import { GarnishmentOrder } from '@/types/garnishment';
 
 export interface GarnishmentOrder {
   id: string;
