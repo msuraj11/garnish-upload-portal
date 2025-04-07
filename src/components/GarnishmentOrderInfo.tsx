@@ -2,8 +2,7 @@
 import React from 'react';
 import { GarnishmentOrderWithTimeline } from '@/context/GarnishmentContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { FileText } from 'lucide-react';
-import { format, parseISO } from 'date-fns';
+import { FileText, MapPin, Building, Gavel } from 'lucide-react';
 import { workflowStages } from '@/components/GarnishmentWorkflowTracker';
 
 interface GarnishmentOrderInfoProps {
@@ -38,7 +37,19 @@ const GarnishmentOrderInfo: React.FC<GarnishmentOrderInfoProps> = ({ order, form
             <p className="text-sm text-gray-500">Due Date</p>
             <p className="font-medium">{formatDate(order.dueDate)}</p>
           </div>
-          <div>
+          {order.courtOrderNumber && (
+            <div>
+              <p className="text-sm text-gray-500">Court Order Number</p>
+              <p className="font-medium">{order.courtOrderNumber}</p>
+            </div>
+          )}
+          {order.plaintiff && (
+            <div>
+              <p className="text-sm text-gray-500">Plaintiff</p>
+              <p className="font-medium">{order.plaintiff}</p>
+            </div>
+          )}
+          <div className="col-span-2">
             <p className="text-sm text-gray-500">Current Stage</p>
             <p className="font-medium">
               <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
@@ -55,6 +66,54 @@ const GarnishmentOrderInfo: React.FC<GarnishmentOrderInfoProps> = ({ order, form
             </p>
           </div>
         </div>
+
+        {/* Court information section */}
+        {order.courtAddress && (
+          <div className="mt-4 pt-4 border-t border-gray-200">
+            <h3 className="text-sm font-medium flex items-center mb-3">
+              <Gavel className="h-4 w-4 mr-2 text-bank" />
+              Court Information
+            </h3>
+            <div className="grid grid-cols-1 gap-3">
+              {order.courtAddress && (
+                <div>
+                  <p className="text-sm text-gray-500">Court Address</p>
+                  <p className="font-medium flex items-start">
+                    <MapPin className="h-4 w-4 mr-1 mt-0.5 text-gray-400" />
+                    {order.courtAddress}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Defendant information section */}
+        {(order.defendantAddress || order.defendantId) && (
+          <div className="mt-4 pt-4 border-t border-gray-200">
+            <h3 className="text-sm font-medium flex items-center mb-3">
+              <Building className="h-4 w-4 mr-2 text-bank" />
+              Defendant Information
+            </h3>
+            <div className="grid grid-cols-1 gap-3">
+              {order.defendantId && (
+                <div>
+                  <p className="text-sm text-gray-500">Defendant ID</p>
+                  <p className="font-medium">{order.defendantId}</p>
+                </div>
+              )}
+              {order.defendantAddress && (
+                <div>
+                  <p className="text-sm text-gray-500">Defendant Address</p>
+                  <p className="font-medium flex items-start">
+                    <MapPin className="h-4 w-4 mr-1 mt-0.5 text-gray-400" />
+                    {order.defendantAddress}
+                  </p>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

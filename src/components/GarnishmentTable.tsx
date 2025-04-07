@@ -30,6 +30,11 @@ export interface GarnishmentOrder {
   dueDate: Date;
   currentStage: WorkflowStage;
   amount: number;
+  courtOrderNumber?: string;
+  courtAddress?: string;
+  defendantAddress?: string;
+  defendantId?: string;
+  plaintiff?: string;
 }
 
 interface GarnishmentTableProps {

@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
@@ -10,7 +9,7 @@ import { toast } from '@/components/ui/sonner';
 import { ArrowLeft, FileIcon } from 'lucide-react';
 import { formatDate } from '@/utils/dateUtils';
 
-// Import our new component modules
+// Import our component modules
 import GarnishmentOrderInfo from '@/components/GarnishmentOrderInfo';
 import CustomerDetails from '@/components/CustomerDetails';
 import GarnishmentTimeline from '@/components/GarnishmentTimeline';
@@ -47,7 +46,6 @@ const GarnishmentDetails = () => {
   const isLastStage = order.currentStage === 'outbound_communication';
   const isFirstStage = order.currentStage === 'document_management';
   
-  // Dynamic button label based on current stage
   const getButtonLabel = () => {
     if (isCaseManagementStage) {
       return "Advance to Next Stage";
@@ -65,7 +63,6 @@ const GarnishmentDetails = () => {
   };
   
   const handleApproveStage = () => {
-    // For case management stage, use the selected next stage from radio button
     if (isCaseManagementStage && selectedNextStage) {
       updateOrderStage(order.id, selectedNextStage);
       
@@ -80,7 +77,6 @@ const GarnishmentDetails = () => {
       
       toast.success(`Order moved to ${workflowStages.find(stage => stage.id === selectedNextStage)?.label} stage`);
     } 
-    // For other stages, follow the regular workflow
     else {
       const currentIndex = workflowStages.findIndex(stage => stage.id === order.currentStage);
       
@@ -163,6 +159,11 @@ const GarnishmentDetails = () => {
             <p className="text-gray-600 mt-1">
               Details and workflow status for this garnishment order
             </p>
+            {order.plaintiff && (
+              <p className="text-sm text-gray-500 mt-1">
+                <span className="font-medium">Plaintiff:</span> {order.plaintiff}
+              </p>
+            )}
           </div>
           
           <div className="flex gap-2 mt-4 md:mt-0">
@@ -194,6 +195,7 @@ const GarnishmentDetails = () => {
       <DocumentViewDialog 
         pdfUrl={getSamplePdfUrl()} 
         caseNumber={order.caseNumber}
+        courtOrderNumber={order.courtOrderNumber}
         showDocument={showDocument}
       />
       
