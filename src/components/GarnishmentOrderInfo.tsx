@@ -2,7 +2,7 @@
 import React from 'react';
 import { GarnishmentOrderWithTimeline } from '@/context/GarnishmentContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { FileText, MapPin, Building, Gavel } from 'lucide-react';
+import { FileText, MapPin, Gavel } from 'lucide-react';
 import { workflowStages } from '@/components/GarnishmentWorkflowTracker';
 
 interface GarnishmentOrderInfoProps {
@@ -81,33 +81,6 @@ const GarnishmentOrderInfo: React.FC<GarnishmentOrderInfoProps> = ({ order, form
                   <p className="font-medium flex items-start">
                     <MapPin className="h-4 w-4 mr-1 mt-0.5 text-gray-400" />
                     {order.courtAddress}
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* Defendant information section */}
-        {(order.defendantAddress || order.defendantId) && (
-          <div className="mt-4 pt-4 border-t border-gray-200">
-            <h3 className="text-sm font-medium flex items-center mb-3">
-              <Building className="h-4 w-4 mr-2 text-bank" />
-              Defendant Information
-            </h3>
-            <div className="grid grid-cols-1 gap-3">
-              {order.defendantId && (
-                <div>
-                  <p className="text-sm text-gray-500">Defendant ID</p>
-                  <p className="font-medium">{order.defendantId}</p>
-                </div>
-              )}
-              {order.defendantAddress && (
-                <div>
-                  <p className="text-sm text-gray-500">Defendant Address</p>
-                  <p className="font-medium flex items-start">
-                    <MapPin className="h-4 w-4 mr-1 mt-0.5 text-gray-400" />
-                    {order.defendantAddress}
                   </p>
                 </div>
               )}
