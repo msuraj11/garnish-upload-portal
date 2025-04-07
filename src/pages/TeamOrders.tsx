@@ -3,7 +3,7 @@ import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { useGarnishment } from '@/context/GarnishmentContext';
-import GarnishmentTable from '@/components/GarnishmentTable';
+import { GarnishmentTable } from '@/components/garnishment-table';
 import { Button } from '@/components/ui/button';
 import { workflowStages, WorkflowStage } from '@/components/GarnishmentWorkflowTracker';
 

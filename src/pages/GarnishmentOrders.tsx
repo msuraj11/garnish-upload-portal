@@ -2,7 +2,7 @@
 import React from 'react';
 import Layout from '@/components/Layout';
 import { useGarnishment } from '@/context/GarnishmentContext';
-import GarnishmentTable from '@/components/GarnishmentTable';
+import { GarnishmentTable } from '@/components/garnishment-table';
 import GarnishmentCharts from '@/components/GarnishmentCharts';
 
 const GarnishmentOrders = () => {
