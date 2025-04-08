@@ -45,6 +45,7 @@ const GarnishmentDetails = () => {
   const isDecisionStage = ['legal_team', 'compliance_team', 'customer_management'].includes(order.currentStage);
   const isLastStage = order.currentStage === 'outbound_communication';
   const isFirstStage = order.currentStage === 'document_management';
+  const pdfFileNameString = `${order?.courtOrderNumber?.split('/').join(':')}-${order?.id}`;
   
   const getButtonLabel = () => {
     if (isCaseManagementStage) {
@@ -193,7 +194,7 @@ const GarnishmentDetails = () => {
       </div>
       
       <DocumentViewDialog 
-        pdfUrl={getSamplePdfUrl()} 
+        pdfUrl={getSamplePdfUrl(pdfFileNameString)} 
         caseNumber={order.caseNumber}
         courtOrderNumber={order.courtOrderNumber}
         showDocument={showDocument}

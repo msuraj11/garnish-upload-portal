@@ -11,7 +11,7 @@ interface GarnishmentContextType {
   getOrderById: (id: string) => GarnishmentOrderWithTimeline | undefined;
   updateOrderStage: (id: string, newStage: WorkflowStage) => void;
   getOrdersByStage: (stage: WorkflowStage) => GarnishmentOrder[];
-  getSamplePdfUrl: () => string;
+  getSamplePdfUrl: (key: string) => string;
   addTimelineEvent: (event: TimelineEvent) => void;
 }
 
@@ -71,8 +71,8 @@ export const GarnishmentProvider: React.FC<{ children: React.ReactNode }> = ({ c
     return orders.filter(order => order.currentStage === stage);
   };
 
-  const getSamplePdfUrl = () => {
-    return '/sample-garnishment-order.pdf';
+  const getSamplePdfUrl = (key: string) => {
+    return `/${key}.pdf`;
   };
 
   const addTimelineEvent = (event: TimelineEvent) => {
