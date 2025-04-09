@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { useGarnishment } from '@/context/GarnishmentContext';
 import GarnishmentWorkflowTracker, { WorkflowStage, workflowStages } from '@/components/GarnishmentWorkflowTracker';
@@ -8,22 +8,26 @@ import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/sonner';
 import { ArrowLeft, FileIcon } from 'lucide-react';
 import { formatDate } from '@/utils/dateUtils';
-
-// Import our component modules
 import GarnishmentOrderInfo from '@/components/GarnishmentOrderInfo';
 import CustomerDetails from '@/components/CustomerDetails';
 import GarnishmentTimeline from '@/components/GarnishmentTimeline';
 import WorkflowAdvancementDialog from '@/components/WorkflowAdvancementDialog';
 import DocumentViewDialog from '@/components/DocumentViewDialog';
+import { useIsMobile } from '@/hooks/use-mobile';
 
 const GarnishmentDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const { getOrderById, updateOrderStage, getSamplePdfUrl, addTimelineEvent } = useGarnishment();
   const [showDocument, setShowDocument] = useState(false);
   const [isStageDialogOpen, setIsStageDialogOpen] = useState(false);
   const [comments, setComments] = useState('');
   const [selectedNextStage, setSelectedNextStage] = useState<WorkflowStage | null>(null);
+  const isMobile = useIsMobile();
+  
+  const isFromGarnishmentManager = location.pathname.startsWith('/garnishment/') && 
+    (location.state?.from === 'orders' || !location.state?.from);
   
   const order = getOrderById(id || '');
   
@@ -46,6 +50,8 @@ const GarnishmentDetails = () => {
   const isLastStage = order.currentStage === 'outbound_communication';
   const isFirstStage = order.currentStage === 'document_management';
   const pdfFileNameString = `${order?.courtOrderNumber?.split('/').join(':')}-${order?.id}`;
+  
+  const isDecisionButtonDisabled = isFromGarnishmentManager && isDecisionStage;
   
   const getButtonLabel = () => {
     if (isCaseManagementStage) {
@@ -183,6 +189,8 @@ const GarnishmentDetails = () => {
               <Button 
                 onClick={handleOpenStageDialog} 
                 className="bg-bank hover:bg-bank-dark"
+                disabled={isDecisionButtonDisabled}
+                title={isDecisionButtonDisabled ? "Garnishment Managers cannot make decisions on this stage" : ""}
               >
                 {getButtonLabel()}
               </Button>
