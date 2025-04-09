@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { TableRow, TableCell } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { ExternalLink } from "lucide-react";
@@ -11,9 +11,12 @@ import { GarnishmentOrder } from '@/types/garnishment';
 interface GarnishmentTableRowProps {
   order: GarnishmentOrder;
   hideCurrentStage: boolean;
+  routeState?: { from: string };
 }
 
-const GarnishmentTableRow: React.FC<GarnishmentTableRowProps> = ({ order, hideCurrentStage }) => {
+const GarnishmentTableRow: React.FC<GarnishmentTableRowProps> = ({ order, hideCurrentStage, routeState }) => {
+  const navigate = useNavigate();
+  console.log(routeState)
   const getStageName = (stageId: WorkflowStage) => {
     const stage = workflowStages.find(s => s.id === stageId);
     return stage ? stage.label : 'Unknown';
@@ -39,11 +42,15 @@ const GarnishmentTableRow: React.FC<GarnishmentTableRowProps> = ({ order, hideCu
     }
   };
 
+  const handleViewDetails = (id: string) => {
+    navigate(`/garnishment/${id}`, { state: routeState });
+  }
+
   return (
     <TableRow>
       <TableCell className="font-medium">{order.caseNumber}</TableCell>
+      <TableCell>{order.courtOrderNumber}</TableCell>
       <TableCell>{order.customerName}</TableCell>
-      <TableCell>{order.accountNumber}</TableCell>
       <TableCell>{order.amount.toLocaleString('de-DE')} €</TableCell>
       <TableCell>{formatDate(order.dateReceived)}</TableCell>
       <TableCell>{formatDate(order.dueDate)}</TableCell>
@@ -64,14 +71,12 @@ const GarnishmentTableRow: React.FC<GarnishmentTableRowProps> = ({ order, hideCu
       )}
       <TableCell className="text-right">
         <Button 
-          variant="outline" 
-          size="sm" 
-          asChild
+          variant="outline"
+          size="sm"
+          onClick={() => handleViewDetails(order.id)}
         >
-          <Link to={`/garnishment/${order.id}`} className="flex items-center">
-            View Details
-            <ExternalLink className="ml-1 h-3 w-3" />
-          </Link>
+          View Details
+          <ExternalLink className="ml-1 h-3 w-3" />
         </Button>
       </TableCell>
     </TableRow>

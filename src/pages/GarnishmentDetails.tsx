@@ -4,7 +4,6 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { useGarnishment } from '@/context/GarnishmentContext';
 import GarnishmentWorkflowTracker, { WorkflowStage, workflowStages } from '@/components/GarnishmentWorkflowTracker';
-import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { toast } from '@/components/ui/sonner';
 import { ArrowLeft, FileIcon } from 'lucide-react';
@@ -55,10 +54,7 @@ const GarnishmentDetails = () => {
   const pdfFileNameString = `${order?.courtOrderNumber?.split('/').join(':')}-${order?.id}`;
   
   // Determine if button should be disabled
-  const isButtonDisabled = isFromGarnishmentManager && 
-    (order.currentStage === 'compliance_team' || 
-     order.currentStage === 'legal_team' || 
-     order.currentStage === 'customer_management');
+  const isButtonDisabled = isFromGarnishmentManager && isDecisionStage;
   
   const getButtonLabel = () => {
     if (isCaseManagementStage) {

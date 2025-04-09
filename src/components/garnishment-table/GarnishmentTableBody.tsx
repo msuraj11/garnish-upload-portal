@@ -7,9 +7,10 @@ import GarnishmentTableRow from './GarnishmentTableRow';
 interface GarnishmentTableBodyProps {
   orders: GarnishmentOrder[];
   hideCurrentStage: boolean;
+  routeState?: { from: string };
 }
 
-const GarnishmentTableBody: React.FC<GarnishmentTableBodyProps> = ({ orders, hideCurrentStage }) => {
+const GarnishmentTableBody: React.FC<GarnishmentTableBodyProps> = ({ orders, hideCurrentStage, routeState }) => {
   return (
     <TableBody>
       {orders.length === 0 ? (
@@ -24,6 +25,7 @@ const GarnishmentTableBody: React.FC<GarnishmentTableBodyProps> = ({ orders, hid
             key={order.id}
             order={order}
             hideCurrentStage={hideCurrentStage}
+            routeState={routeState}
           />
         ))
       )}

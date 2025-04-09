@@ -11,8 +11,8 @@ const GarnishmentTableHeader: React.FC<GarnishmentTableHeaderProps> = ({ hideCur
     <TableHeader>
       <TableRow>
         <TableHead>Case Number</TableHead>
+        <TableHead>Court Order Number</TableHead>
         <TableHead>Customer Name</TableHead>
-        <TableHead>Account Number</TableHead>
         <TableHead>Amount</TableHead>
         <TableHead>Date Received</TableHead>
         <TableHead>Due Date</TableHead>
