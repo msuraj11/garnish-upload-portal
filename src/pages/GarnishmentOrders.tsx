@@ -21,7 +21,11 @@ const GarnishmentOrders = () => {
       
       <GarnishmentCharts />
       
-      <GarnishmentTable orders={orders} itemsPerPage={5} />
+      <GarnishmentTable 
+        orders={orders} 
+        itemsPerPage={5} 
+        routeState={{ from: 'garnishment-orders' }}
+      />
     </Layout>
   );
 };

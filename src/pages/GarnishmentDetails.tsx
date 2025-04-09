@@ -1,5 +1,6 @@
+
 import React, { useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import Layout from '@/components/Layout';
 import { useGarnishment } from '@/context/GarnishmentContext';
 import GarnishmentWorkflowTracker, { WorkflowStage, workflowStages } from '@/components/GarnishmentWorkflowTracker';
@@ -19,11 +20,17 @@ import DocumentViewDialog from '@/components/DocumentViewDialog';
 const GarnishmentDetails = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const { getOrderById, updateOrderStage, getSamplePdfUrl, addTimelineEvent } = useGarnishment();
   const [showDocument, setShowDocument] = useState(false);
   const [isStageDialogOpen, setIsStageDialogOpen] = useState(false);
   const [comments, setComments] = useState('');
   const [selectedNextStage, setSelectedNextStage] = useState<WorkflowStage | null>(null);
+  
+  // Check if user is coming from Garnishment Manager role
+  const isFromGarnishmentManager = location.pathname.includes('/garnishment/') && 
+    (location.state?.from === 'garnishment-orders' || 
+     location.pathname === '/garnishment-orders');
   
   const order = getOrderById(id || '');
   
@@ -46,6 +53,12 @@ const GarnishmentDetails = () => {
   const isLastStage = order.currentStage === 'outbound_communication';
   const isFirstStage = order.currentStage === 'document_management';
   const pdfFileNameString = `${order?.courtOrderNumber?.split('/').join(':')}-${order?.id}`;
+  
+  // Determine if button should be disabled
+  const isButtonDisabled = isFromGarnishmentManager && 
+    (order.currentStage === 'compliance_team' || 
+     order.currentStage === 'legal_team' || 
+     order.currentStage === 'customer_management');
   
   const getButtonLabel = () => {
     if (isCaseManagementStage) {
@@ -183,6 +196,7 @@ const GarnishmentDetails = () => {
               <Button 
                 onClick={handleOpenStageDialog} 
                 className="bg-bank hover:bg-bank-dark"
+                disabled={isButtonDisabled}
               >
                 {getButtonLabel()}
               </Button>
