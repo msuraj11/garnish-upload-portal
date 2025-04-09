@@ -3,9 +3,9 @@ import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Table } from '@/components/ui/table';
 import { GarnishmentOrder } from '@/types/garnishment';
-import { GarnishmentTableHeader } from './GarnishmentTableHeader';
+import GarnishmentTableHeader from './GarnishmentTableHeader';
 import { GarnishmentTableBody } from './GarnishmentTableBody';
-import { TablePagination } from './TablePagination';
+import TablePagination from './TablePagination';
 
 interface GarnishmentTableProps {
   orders: GarnishmentOrder[];
