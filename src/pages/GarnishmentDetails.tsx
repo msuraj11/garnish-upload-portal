@@ -105,6 +105,7 @@ const GarnishmentDetails = () => {
     setComments('');
     setSelectedNextStage(null);
     setIsStageDialogOpen(false);
+    setTimeout(() => {navigate(-1)}, 1000);
   };
   
   const handleRejectStage = () => {
@@ -143,6 +144,7 @@ const GarnishmentDetails = () => {
     
     setComments('');
     setIsStageDialogOpen(false);
+    setTimeout(() => {navigate(-1)}, 1000);
   };
 
   const handleShowDocument = () => {
