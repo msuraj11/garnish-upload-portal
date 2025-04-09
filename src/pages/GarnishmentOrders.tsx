@@ -4,11 +4,9 @@ import Layout from '@/components/Layout';
 import { useGarnishment } from '@/context/GarnishmentContext';
 import { GarnishmentTable } from '@/components/garnishment-table';
 import GarnishmentCharts from '@/components/GarnishmentCharts';
-import { useLocation } from 'react-router-dom';
 
 const GarnishmentOrders = () => {
   const { orders } = useGarnishment();
-  const location = useLocation();
 
   return (
     <Layout>
@@ -23,11 +21,7 @@ const GarnishmentOrders = () => {
       
       <GarnishmentCharts />
       
-      <GarnishmentTable 
-        orders={orders} 
-        itemsPerPage={5}
-        routeState={{ from: 'orders' }} 
-      />
+      <GarnishmentTable orders={orders} itemsPerPage={5} />
     </Layout>
   );
 };

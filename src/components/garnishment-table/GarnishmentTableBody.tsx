@@ -1,32 +1,34 @@
 
 import React from 'react';
-import { TableBody } from "@/components/ui/table";
-import { GarnishmentTableRow } from './GarnishmentTableRow';
+import { TableBody, TableRow, TableCell } from "@/components/ui/table";
 import { GarnishmentOrder } from '@/types/garnishment';
+import GarnishmentTableRow from './GarnishmentTableRow';
 
 interface GarnishmentTableBodyProps {
-  currentItems: GarnishmentOrder[];
-  routeState?: Record<string, any>;
+  orders: GarnishmentOrder[];
+  hideCurrentStage: boolean;
 }
 
-export const GarnishmentTableBody = ({ currentItems, routeState }: GarnishmentTableBodyProps) => {
+const GarnishmentTableBody: React.FC<GarnishmentTableBodyProps> = ({ orders, hideCurrentStage }) => {
   return (
     <TableBody>
-      {currentItems.length === 0 ? (
-        <tr>
-          <td colSpan={6} className="h-24 text-center">
-            No orders found.
-          </td>
-        </tr>
+      {orders.length === 0 ? (
+        <TableRow>
+          <TableCell colSpan={8} className="h-24 text-center text-gray-500">
+            No garnishment orders found
+          </TableCell>
+        </TableRow>
       ) : (
-        currentItems.map((order) => (
+        orders.map((order) => (
           <GarnishmentTableRow 
-            key={order.id} 
+            key={order.id}
             order={order}
-            routeState={routeState}
+            hideCurrentStage={hideCurrentStage}
           />
         ))
       )}
     </TableBody>
   );
 };
+
+export default GarnishmentTableBody;

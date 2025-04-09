@@ -1,6 +1,5 @@
 
 import { GarnishmentOrderWithTimeline } from '@/types/garnishment';
-import { WorkflowStage } from '@/components/GarnishmentWorkflowTracker';
 
 // Helper function to parse dates in stored orders
 export const parseStoredOrders = (storedOrders: any[]): GarnishmentOrderWithTimeline[] => {
@@ -26,24 +25,4 @@ export const parseStoredOrders = (storedOrders: any[]): GarnishmentOrderWithTime
         : []
     };
   });
-};
-
-// Function to get the appropriate color for each workflow stage
-export const getColorForStage = (stage: WorkflowStage): string => {
-  switch (stage) {
-    case 'document_management':
-      return 'bg-blue-100 text-blue-800';
-    case 'case_management':
-      return 'bg-purple-100 text-purple-800';
-    case 'legal_team':
-      return 'bg-yellow-100 text-yellow-800';
-    case 'compliance_team':
-      return 'bg-orange-100 text-orange-800';
-    case 'customer_management':
-      return 'bg-green-100 text-green-800';
-    case 'outbound_communication':
-      return 'bg-red-100 text-red-800';
-    default:
-      return 'bg-gray-100 text-gray-800';
-  }
 };
