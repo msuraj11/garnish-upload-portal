@@ -10,9 +10,10 @@ import TablePagination from './TablePagination';
 interface GarnishmentTableProps {
   orders: GarnishmentOrder[];
   itemsPerPage?: number;
+  routeState?: { from: string };
 }
 
-const GarnishmentTable: React.FC<GarnishmentTableProps> = ({ orders, itemsPerPage = 10 }) => {
+const GarnishmentTable: React.FC<GarnishmentTableProps> = ({ orders, itemsPerPage = 10, routeState }) => {
   const location = useLocation();
   const path = location.pathname;
   const hideCurrentStage = path.startsWith('/team/');
@@ -45,6 +46,7 @@ const GarnishmentTable: React.FC<GarnishmentTableProps> = ({ orders, itemsPerPag
         <GarnishmentTableBody 
           orders={paginatedOrders} 
           hideCurrentStage={hideCurrentStage} 
+          routeState={routeState}
         />
       </Table>
       
