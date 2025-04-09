@@ -3,16 +3,21 @@ import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Table } from '@/components/ui/table';
 import { GarnishmentOrder } from '@/types/garnishment';
-import GarnishmentTableHeader from './GarnishmentTableHeader';
-import GarnishmentTableBody from './GarnishmentTableBody';
-import TablePagination from './TablePagination';
+import { GarnishmentTableHeader } from './GarnishmentTableHeader';
+import { GarnishmentTableBody } from './GarnishmentTableBody';
+import { TablePagination } from './TablePagination';
 
 interface GarnishmentTableProps {
   orders: GarnishmentOrder[];
   itemsPerPage?: number;
+  routeState?: Record<string, any>;
 }
 
-const GarnishmentTable: React.FC<GarnishmentTableProps> = ({ orders, itemsPerPage = 10 }) => {
+const GarnishmentTable: React.FC<GarnishmentTableProps> = ({ 
+  orders, 
+  itemsPerPage = 10,
+  routeState
+}) => {
   const location = useLocation();
   const path = location.pathname;
   const hideCurrentStage = path.startsWith('/team/');
@@ -43,8 +48,8 @@ const GarnishmentTable: React.FC<GarnishmentTableProps> = ({ orders, itemsPerPag
       <Table>
         <GarnishmentTableHeader hideCurrentStage={hideCurrentStage} />
         <GarnishmentTableBody 
-          orders={paginatedOrders} 
-          hideCurrentStage={hideCurrentStage} 
+          currentItems={paginatedOrders} 
+          routeState={routeState} 
         />
       </Table>
       
