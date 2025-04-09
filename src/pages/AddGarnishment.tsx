@@ -70,7 +70,7 @@ const AddGarnishment = () => {
               <Label htmlFor="caseNumber">Case Number</Label>
               <Input 
                 id="caseNumber" 
-                placeholder="e.g. GRN-2023-004" 
+                placeholder="e.g. GRN-2025-004" 
                 value={caseNumber}
                 onChange={(e) => setCaseNumber(e.target.value)}
               />
