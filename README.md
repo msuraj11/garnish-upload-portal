@@ -1,4 +1,4 @@
-# Welcome to Garnishment Processing Demo App for DB-Prince automation project
+# Welcome to Garnishment Processing Demo App for Prince automation project
  
 ## Project info
  
